@@ -9,7 +9,7 @@ init -100 python:
 	pdl_page_size = 6
 	
 	
-	launcher_dir = os.path.abspath(get_filename(1))
+	launcher_dir = os.path.abspath(get_filename(1)).replace('\\', '/')
 	i = launcher_dir.rfind('/resources')
 	launcher_dir = launcher_dir[:i]
 	
@@ -143,7 +143,7 @@ init python:
 		env = dict(os.environ, RE_LANG=config.language)
 		
 		import subprocess
-		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=True, env=env)
+		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=False, env=env)
 		add_proc(proc)
 	
 	def build_project():
