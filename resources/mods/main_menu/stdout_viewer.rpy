@@ -41,4 +41,6 @@ screen stdout_viewer:
 		null ysize 30
 	
 	key 'ESCAPE' action Hide('stdout_viewer')
-
+	textbutton _('Return'):
+		align (0.95, 0.95)
+		action HideScreen('stdout_viewer')

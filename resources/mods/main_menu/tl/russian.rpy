@@ -5,7 +5,7 @@ translate russian strings:
 	new 'Отмена'
 	
 	
-	# code
+	# projects
 	old 'Disallowed action'
 	new 'Запрещённое действие'
 	
@@ -26,8 +26,22 @@ translate russian strings:
 	
 	
 	# extra
+	old 'Project Language'
+	new 'Язык проекта'
+	
+	old 'Delete Variables'
+	new 'Удалить переменные'
+	
+	old 'Variable data deleted'
+	new 'Переменные данные удалены'
+	
 	old 'Stdout (from print)'
 	new 'Вывод (из print)'
+	
+	
+	# lang
+	old 'Language updated'
+	new 'Язык обновлён'
 	
 	
 	# main

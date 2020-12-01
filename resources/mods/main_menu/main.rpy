@@ -20,6 +20,11 @@ init 10 python:
 	
 	
 	console_background_alpha = 0.6
+	
+	
+	def open_documentation():
+		import webbrowser
+		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
 
 
 screen main_menu:

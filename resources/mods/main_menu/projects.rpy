@@ -15,13 +15,14 @@ init -100 python:
 	
 	
 	def load_persistent_data():
-		global projects_dir, active_project
+		global projects_dir, active_project, active_project_language
 		
 		if persistent.projects_dir is None:
 			persistent.projects_dir = os.path.dirname(launcher_dir)
 		
 		projects_dir = persistent.projects_dir
 		active_project = persistent.active_project
+		active_project_language = get_active_project_language()
 	
 	load_persistent_data()
 	
@@ -63,8 +64,9 @@ init -100 python:
 	
 	
 	def select_project(project):
-		global active_project
+		global active_project, active_project_language
 		active_project = persistent.active_project = project
+		active_project_language = get_active_project_language()
 		stdout_viewer_clear()
 	
 	update_projects(projects_dir)
@@ -105,22 +107,7 @@ init python:
 			except:
 				notification(_('Error on copy <%s> to <%s>') % (old_path, new_path))
 		
-		if config.language is not None:
-			tl_path_dir = projects_dir + '/' + active_project + '/Ren-Engine/rpy/tl/'
-			tl_path_old = tl_path_dir + config.language + '.rpy'
-			tl_path_new = tl_path_dir + '0default_' + config.language + '.rpy'
-			
-			tl_old = open(tl_path_old, 'rb')
-			tl_new = open(tl_path_new, 'wb')
-			for line in tl_old:
-				if line.startswith('translate ') and line.endswith(' strings:\n'):
-					lang_start = line.find(' ')
-					lang_end = line.rfind(' ')
-					lang = line[lang_start:lang_end].strip()
-					if lang == config.language:
-						line = 'translate None strings:\n'
-				tl_new.write(line)
-			os.remove(tl_path_old)
+		update_active_project_language()
 		
 		params = open(projects_dir + '/' + active_project + '/resources/params.conf', 'rb')
 		for line in params:
@@ -141,6 +128,7 @@ init python:
 		else:
 			notification(_('*.exe file not found in /Ren-Engine'))
 		
+		
 		if out_msg_ok:
 			notification(_('Ren-Engine updated'))
 	
@@ -152,8 +140,10 @@ init python:
 		else:
 			path += 'sh'
 		
+		env = dict(os.environ, RE_LANG=config.language)
+		
 		import subprocess
-		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=True)
+		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=True, env=env)
 		add_proc(proc)
 	
 	def build_project():
@@ -171,7 +161,4 @@ init python:
 		
 		notification(_('Zip built'))
 	
-	def open_documentation():
-		import webbrowser
-		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
-
+	

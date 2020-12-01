@@ -86,3 +86,6 @@ screen new:
 		action create_new_project
 	
 	key 'ESCAPE' action Hide('new')
+	textbutton _('Return'):
+		align (0.05, 0.95)
+		action HideScreen('new')

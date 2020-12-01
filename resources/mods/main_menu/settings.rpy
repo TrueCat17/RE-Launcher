@@ -75,7 +75,7 @@ screen settings:
 					for w, h in settings_resolutions[i * 3 : (i + 1) * 3]:
 						textbutton ('%sx%s' % (w, h)) xsize 100 action set_stage_size(w, h)
 			
-			null ysize 20
+			null ysize 10
 			
 			text _('Fullscreen') xalign 0.5
 			hbox:
@@ -86,15 +86,15 @@ screen settings:
 				text 'F11'
 				textbutton _('Off') xsize 50 action set_fullscreen(False)
 			
-			null ysize 20
+			null ysize 10
 			
 			text 'Language' xalign 0.5
 			hbox:
 				xalign 0.5
 				spacing 10
 				
-				textbutton 'english' action Language(None)
-				textbutton 'russian' action Language('russian')
+				textbutton 'english' xsize 120 action Language('english')
+				textbutton 'russian' xsize 120 action Language('russian')
 	
 	key 'ESCAPE' action HideScreen('settings')
 	textbutton _('Return'):
