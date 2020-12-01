@@ -22,7 +22,10 @@ init -100 python:
 		
 		projects_dir = persistent.projects_dir
 		active_project = persistent.active_project
-		active_project_language = get_active_project_language()
+		if active_project:
+			active_project_language = get_active_project_language()
+		else:
+			active_project_language = config.language
 	
 	load_persistent_data()
 	
@@ -148,15 +151,19 @@ init python:
 	
 	def build_project():
 		zip_path = projects_dir + '/' + active_project + '.zip'
-		var_path = projects_dir + '/' + active_project + '/var'
 		
 		import zipfile
 		zf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
 		for path, dirs, files in os.walk(projects_dir + '/' + active_project):
-			if path.startswith(var_path):
+			project_path = path[len(projects_dir) + 1:]
+			if project_path.startswith(active_project + '/var'):
 				continue
-		    for f in files:
-		        zf.write(path + '/' + f, path[len(projects_dir):] + '/' + f)
+			
+			for f in files:
+				zf.write(path + '/' + f, project_path + '/' + f)
+			
+			if not dirs and not files:
+				zf.writestr(project_path + '/empty.txt', '')
 		zf.close()
 		
 		notification(_('Zip built'))
