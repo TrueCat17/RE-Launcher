@@ -77,17 +77,6 @@ screen settings:
 			
 			null ysize 10
 			
-			text _('Fullscreen') xalign 0.5
-			hbox:
-				xalign 0.5
-				spacing 10
-				
-				textbutton _('On')  xsize 50 action set_fullscreen(True)
-				text 'F11'
-				textbutton _('Off') xsize 50 action set_fullscreen(False)
-			
-			null ysize 10
-			
 			text 'Language' xalign 0.5
 			hbox:
 				xalign 0.5
