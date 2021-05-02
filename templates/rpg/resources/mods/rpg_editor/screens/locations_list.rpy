@@ -8,10 +8,11 @@ init python:
 	locations_start_btn = 0
 	
 	def change_using_location(location):
-		location.using = not location.using
-		if location.using:
+		if location.x is None:
 			location.x = location.x or k * get_stage_width() / 3
 			location.y = location.y or k * get_stage_height() / 2
+		else:
+			del location.x
 		
 		set_save_locations()
 
@@ -29,7 +30,7 @@ screen locations_list:
 			spacing locations_indent
 			
 			python:
-				names = locations.keys()
+				names = rpg_locations.keys()
 				names.sort()
 				
 				locations_count_btns = (get_stage_height() - locations_indent) / (locations_btn_height + locations_indent)
@@ -39,8 +40,8 @@ screen locations_list:
 			
 			for name in names:
 				python:
-					location = locations[name]
-					color = '#0F0' if location.using else '#F80'
+					location = rpg_locations[name]
+					color = '#0F0' if location.x is not None else '#F80'
 					preview = get_preview(name)
 					size = '\n(' + str(location.xsize) + 'x' + str(location.ysize) + ')'
 				
@@ -68,7 +69,7 @@ screen locations_list:
 								text_size 20
 								yalign 0.5
 							
-							textbutton _('Delete' if location.using else 'Add'):
+							textbutton _('Delete' if location.x is not None else 'Add'):
 								size (100, 24)
 								text_size 18
 								action change_using_location(location)

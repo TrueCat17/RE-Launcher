@@ -2,9 +2,6 @@ label rpg_start:
 	python:
 		set_location("enter", "ikarus_out")
 		me.set_direction(to_back)
-		me.set_pose("stance")
-	
-	window show
 	
 	"RPG starts here."
 	"Use WASD/arrows + Shift. Action key: E."
