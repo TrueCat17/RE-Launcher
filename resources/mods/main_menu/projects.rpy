@@ -23,7 +23,7 @@ init -100 python:
 		projects_dir = persistent.projects_dir
 		active_project = persistent.active_project
 		if active_project:
-			active_project_language = get_active_project_language()
+			active_project_language, _enable_all = get_active_project_language()
 		else:
 			active_project_language = config.language
 	
@@ -69,7 +69,7 @@ init -100 python:
 	def select_project(project):
 		global active_project, active_project_language
 		active_project = persistent.active_project = project
-		active_project_language = get_active_project_language()
+		active_project_language, _enable_all = get_active_project_language()
 		stdout_viewer_clear()
 	
 	update_projects(projects_dir)

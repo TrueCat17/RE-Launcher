@@ -3,14 +3,15 @@ init -1000 python:
 	
 	def get_language_from_line(line):
 		if ('config.default_language' not in line) or ('=' not in line):
-			return None
+			return None, False
 		
 		parts = line.split('=')
 		value = parts[-1].strip()
+		enable_all = value.endswith('enable all')
 		try:
-			return eval(value, {})
+			return eval(value, {}), enable_all
 		except:
-			return None
+			return None, enable_all
 	
 	def get_active_config_path():
 		return projects_dir + '/' + active_project + '/resources/mods/common/config.rpy'
@@ -22,14 +23,16 @@ init -1000 python:
 		)
 	
 	def get_active_project_language():
-		res = config.language
+		lang, enable_all = config.language, False
 		
 		config_path = get_active_config_path()
 		if os.path.exists(config_path):
 			for line in open(config_path, 'rb'):
-				res = get_language_from_line(line) or res
+				tmp_lang, tmp_enable_all = get_language_from_line(line)
+				if tmp_lang:
+					lang, enable_all = tmp_lang, tmp_enable_all
 		
-		return res
+		return lang, enable_all
 	
 	def update_active_project_language():
 		tl_path = '/Ren-Engine/rpy/tl/'
@@ -41,14 +44,16 @@ init -1000 python:
 			f = open(config_path, 'wb')
 			f.write(get_code_for_set_lang(active_project_language))
 		
-		if os.path.exists(tl_path_active):
-			shutil.rmtree(tl_path_active)
-		os.mkdir(tl_path_active)
-		
-		for f in os.listdir(tl_path_launcher):
-			if f.endswith(active_project_language + '.rpy'):
-				shutil.copyfile(tl_path_launcher + f, tl_path_active + f)
-				break
+		lang, enable_all = get_active_project_language()
+		if not enable_all:
+			if os.path.exists(tl_path_active):
+				shutil.rmtree(tl_path_active)
+			os.mkdir(tl_path_active)
+			
+			for f in os.listdir(tl_path_launcher):
+				if f.endswith(lang + '.rpy'):
+					shutil.copyfile(tl_path_launcher + f, tl_path_active + f)
+					break
 	
 	def set_active_project_language(lang):
 		global active_project_language
@@ -64,11 +69,11 @@ init -1000 python:
 		f = open(config_path, 'wb')
 		was_lang = False
 		for line in lines:
-			lang = get_language_from_line(line)
+			lang, enable_all = get_language_from_line(line)
 			if lang:
 				was_lang = True
 				i = line.rfind('=')
-				line = line[:i].rstrip() + ' = "' + active_project_language + '"'
+				line = line[:i].rstrip() + ' = "' + active_project_language + '"' + (' # enable all' if enable_all else '') + '\n'
 			f.write(line)
 		
 		if not was_lang:
