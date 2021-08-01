@@ -81,7 +81,7 @@ init python:
 			to_loc = place.to_location_name or ''
 			to_place = place.to_place_name or ''
 			res = '%s, "%s", "%s"' % (exit_side, to_loc, to_place)
-			if place.to_side:
+			if place.to_side is not None:
 				to_side = ['to_back', 'to_left', 'to_right', 'to_forward'][place.to_side]
 				res += ', ' + to_side
 			return ', to=[' + res + ']'
@@ -141,6 +141,9 @@ init python:
 		locations_file.close()
 		
 		
+		
+		if not location_objects:
+			return
 		
 		location_objects_file = open(location_objects_file_path, 'rb')
 		tmp = location_objects_file.readlines()
