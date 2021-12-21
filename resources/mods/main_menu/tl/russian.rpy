@@ -18,6 +18,12 @@ translate russian strings:
 	old '*.exe file not found in /Ren-Engine'
 	new 'Файл *.exe не найден в /Ren-Engine'
 	
+	old 'Icon from <params.conf> not found'
+	new 'Иконка из <params.conf> не найдена'
+	
+	old 'Error on update icon for start.exe: %s'
+	new 'Ошибка при обновлении иконки для start.exe %s'
+	
 	old 'Ren-Engine updated'
 	new 'Ren-Engine обновлён'
 	

@@ -89,15 +89,16 @@ init python:
 			
 	
 	def update_project_engine(out_msg_ok = True):
-		if active_project == 'Ren-Engine Launcher':
+		if active_project == 'RE-Launcher':
 			notification(_('Disallowed action'))
 			return
 		
-		to_copy = ['Ren-Engine', 'start.exe', 'start.sh']
+		root = projects_dir + '/' + active_project
 		
+		to_copy = ['Ren-Engine', 'start.exe', 'start.sh']
 		for path in to_copy:
 			old_path = launcher_dir + '/' + path
-			new_path = projects_dir + '/' + active_project + '/' + path
+			new_path = root + '/' + path
 			
 			try:
 				if os.path.isdir(old_path):
@@ -112,18 +113,21 @@ init python:
 		
 		update_active_project_language()
 		
-		params = open(projects_dir + '/' + active_project + '/resources/params.conf', 'rb')
-		for line in params:
-			if line.startswith('window_title'):
-				s = line.find('=') + 1
-				e = line.find('#')
-				name = line[s:e].strip()
-				break
-		else:
+		def get_param(name):
+			params = open(root + '/resources/params.conf', 'rb')
+			for line in params:
+				if line.startswith(name):
+					s = line.find('=') + 1
+					e = line.find('#')
+					return line[s:e].strip()
+			return None
+		
+		name = get_param('window_title')
+		if not name:
 			name = 'Ren-Engine'
 			notification(_('window_title not found in resources/params.conf'))
 		
-		exe_path = projects_dir + '/' + active_project + '/Ren-Engine/'
+		exe_path = root + '/Ren-Engine/'
 		for f in os.listdir(exe_path):
 			if f.endswith('.exe'):
 				os.rename(exe_path + f, exe_path + name + '.exe')
@@ -131,6 +135,16 @@ init python:
 		else:
 			notification(_('*.exe file not found in /Ren-Engine'))
 		
+		icon_path = get_param('window_icon')
+		if icon_path:
+			icon_path = root + '/resources/' + icon_path
+			if not os.path.exists(icon_path):
+				notification(_('Icon from <params.conf> not found'))
+			else:
+				try:
+					ico.set(root + '/start.exe', icon_path)
+				except Exception as e:
+					notification(_('Error on update icon for start.exe: %s') % str(e))
 		
 		if out_msg_ok:
 			notification(_('Ren-Engine updated'))

@@ -20,7 +20,7 @@ init python:
 			return
 		
 		new_dir = projects_dir + '/' + new_project_name
-		if os.path.exists(projects_dir + '/' + new_project_name):
+		if os.path.exists(new_dir):
 			notification(_('Directory already exists:\n%s') % new_dir)
 			return
 		os.mkdir(new_dir)
@@ -28,6 +28,7 @@ init python:
 		shutil.copytree(launcher_dir + '/templates/' + new_project_genre + '/resources', new_dir + '/resources')
 		select_project(new_project_name)
 		update_project_engine(False)
+		update_projects(projects_dir)
 		
 		hide_screen('new')
 		notification(_('Project created') + ':\n' + new_dir)
