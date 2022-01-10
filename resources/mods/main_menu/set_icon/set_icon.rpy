@@ -26,16 +26,8 @@ init python:
 			raise Exception('Incorrect icon image')
 		
 		data_sizes = {}
-		data_sizes[png_path] = os.path.getsize(png_path)
-		while True:
-			for path in paths:
-				data_size = os.path.getsize(path)
-				data_sizes[path] = data_size
-				if data_size < 100: # dummy?
-					time.sleep(0.010)
-					break
-			else:
-				break
+		for path in paths + [png_path]:
+			data_sizes[path] = os.path.getsize(path)
 		
 		if (sizes[png_path] == sizes[paths[0]]) and (data_sizes[png_path] < data_sizes[paths[0]]):
 			paths[0] = png_path
@@ -48,7 +40,7 @@ init python:
 		res = struct.pack('HHH', 0, 1, count)
 		
 		# records
-		for i, path in enumerate(paths):
+		for path in paths:
 			w, h = sizes[path]
 			data_size = data_sizes[path]
 			res += struct.pack('BBBBHHII', w % 256, h % 256, 0, 0, 1, 32, data_size, data_offset)
