@@ -64,7 +64,7 @@ init python:
 		new_icon_path = ico.make(icon_path)
 		
 		# import
-		cur_path = os.path.dirname(os.path.abspath(get_filename(1))) + '/'
+		cur_path = os.path.dirname(os.path.abspath(get_filename(0))) + '/'
 		cur_path = cur_path.replace('\\', '/')
 		
 		old_value = sys.dont_write_bytecode

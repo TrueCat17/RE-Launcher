@@ -9,7 +9,7 @@ init -100 python:
 	pdl_page_size = 6
 	
 	
-	launcher_dir = os.path.abspath(get_filename(1)).replace('\\', '/')
+	launcher_dir = os.path.abspath(get_filename(0)).replace('\\', '/')
 	i = launcher_dir.rfind('/resources')
 	launcher_dir = launcher_dir[:i]
 	
