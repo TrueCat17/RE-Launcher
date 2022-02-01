@@ -16,7 +16,7 @@ init python:
 	
 	def create_new_project():
 		if not new_project_name or new_project_name.isspace():
-			notification(_('Input project name'))
+			notification('Input project name')
 			return
 		
 		new_dir = projects_dir + '/' + new_project_name

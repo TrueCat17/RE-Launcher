@@ -17,7 +17,10 @@ init -100 python:
 	def load_persistent_data():
 		global projects_dir, active_project, active_project_language
 		
-		if persistent.projects_dir is None:
+		if persistent.projects_dir is None or not os.path.exists(persistent.projects_dir):
+			if persistent.projects_dir is not None:
+				notification('Prev projects directory is not exists, set default value')
+				persistent.active_project = None
 			persistent.projects_dir = os.path.dirname(launcher_dir)
 		
 		projects_dir = persistent.projects_dir
@@ -90,7 +93,7 @@ init python:
 	
 	def update_project_engine(out_msg_ok = True):
 		if active_project == 'RE-Launcher':
-			notification(_('Disallowed action'))
+			notification('Disallowed action')
 			return
 		
 		root = projects_dir + '/' + active_project
@@ -125,7 +128,7 @@ init python:
 		name = get_param('window_title')
 		if not name:
 			name = 'Ren-Engine'
-			notification(_('window_title not found in resources/params.conf'))
+			notification('window_title not found in resources/params.conf')
 		
 		exe_path = root + '/Ren-Engine/'
 		for f in os.listdir(exe_path):
@@ -133,13 +136,13 @@ init python:
 				os.rename(exe_path + f, exe_path + name + '.exe')
 				break
 		else:
-			notification(_('*.exe file not found in /Ren-Engine'))
+			notification('*.exe file not found in /Ren-Engine')
 		
 		icon_path = get_param('window_icon')
 		if icon_path:
 			icon_path = root + '/resources/' + icon_path
 			if not os.path.exists(icon_path):
-				notification(_('Icon from <params.conf> not found'))
+				notification('Icon from <params.conf> not found')
 			else:
 				try:
 					ico.set(root + '/start.exe', icon_path)
@@ -147,7 +150,7 @@ init python:
 					notification(_('Error on update icon for start.exe: %s') % str(e))
 		
 		if out_msg_ok:
-			notification(_('Ren-Engine updated'))
+			notification('Ren-Engine updated')
 	
 	def start_project():
 		root = projects_dir + '/' + active_project
@@ -180,6 +183,6 @@ init python:
 				zf.writestr(project_path + '/empty.txt', '')
 		zf.close()
 		
-		notification(_('Zip built'))
+		notification('Zip built')
 	
 	

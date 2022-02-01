@@ -1,4 +1,4 @@
-init python:
+init -1000 python:
 	notification_size = (300, 150)
 	
 	notification_msgs = []
@@ -7,13 +7,13 @@ init python:
 	
 	def notification(msg):
 		show_screen('notification')
-		notification_msgs.append([str(msg), time.time(), 1.0])
+		notification_msgs.append([str(msg), get_game_time(), 1.0])
 	
 	def notification_update():
 		i = 0
 		while i < len(notification_msgs):
 			msg, start_time, alpha = notification_msgs[i]
-			dtime = time.time() - start_time
+			dtime = get_game_time() - start_time
 			
 			if dtime < notification_show_time:
 				alpha = 1
@@ -47,7 +47,7 @@ screen notification:
 				size notification_size
 				alpha alpha
 				
-				text msg:
+				text _(msg):
 					size notification_size
 					color 0x0080FF
 					text_size 24
