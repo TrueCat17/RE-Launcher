@@ -25,13 +25,33 @@ init python:
 			return
 		os.mkdir(new_dir)
 		
-		shutil.copytree(launcher_dir + '/templates/' + new_project_genre + '/resources', new_dir + '/resources')
+		copy_directory(launcher_dir + '/templates/common/resources', new_dir + '/resources')
+		copy_directory(launcher_dir + '/templates/' + new_project_genre + '/resources', new_dir + '/resources')
 		select_project(new_project_name)
 		update_project_engine(False)
 		update_projects(projects_dir)
 		
 		hide_screen('new')
 		notification(_('Project created') + ':\n' + new_dir)
+	
+	def copy_directory(src, dst):
+		if not src.endswith('/'):
+			src += '/'
+		if not dst.endswith('/'):
+			dst += '/'
+		
+		for path, ds, fs in os.walk(src):
+			dst_path = os.path.join(dst, path[len(src):])
+			
+			for d in ds:
+				d = os.path.join(dst_path, d)
+				if not os.path.exists(d):
+					os.makedirs(d)
+			
+			for f in fs:
+				f_from = os.path.join(path, f)
+				f_to   = os.path.join(dst_path, f)
+				shutil.copyfile(f_from, f_to)
 
 
 screen new:
