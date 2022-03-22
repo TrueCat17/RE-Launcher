@@ -14,7 +14,7 @@ init -1000 python:
 			return None, enable_all
 	
 	def get_active_config_path():
-		return projects_dir + '/' + active_project + '/resources/mods/common/config.rpy'
+		return projects_dir + '/' + (active_project or 'RE-Launcher') + '/resources/mods/common/config.rpy'
 	
 	def get_code_for_set_lang(lang):
 		return (
