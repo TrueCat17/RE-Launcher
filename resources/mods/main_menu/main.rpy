@@ -25,6 +25,8 @@ init 10 python:
 	def open_documentation():
 		import webbrowser
 		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
+	
+	notification.align = (1.0, 1.0)
 
 
 screen main_menu:

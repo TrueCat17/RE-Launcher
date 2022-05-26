@@ -19,12 +19,16 @@ init -100 python:
 		
 		if persistent.projects_dir is None or not os.path.exists(persistent.projects_dir):
 			if persistent.projects_dir is not None:
-				notification('Prev projects directory is not exists, set default value')
+				notification.out('Prev projects directory is not exists, set default value')
 				persistent.active_project = None
 			persistent.projects_dir = os.path.dirname(launcher_dir)
 		
 		projects_dir = persistent.projects_dir
 		active_project = persistent.active_project
+		
+		if active_project and not os.path.exists(projects_dir + '/' + active_project):
+			active_project = persistent.active_project = None
+		
 		if active_project:
 			active_project_language, _enable_all = get_active_project_language()
 		else:
@@ -93,7 +97,7 @@ init python:
 	
 	def update_project_engine(out_msg_ok = True):
 		if active_project == 'RE-Launcher':
-			notification('Disallowed action')
+			notification.out('Disallowed action')
 			return
 		
 		root = projects_dir + '/' + active_project
@@ -112,7 +116,7 @@ init python:
 					shutil.copyfile(old_path, new_path)
 					shutil.copystat(old_path, new_path)
 			except:
-				notification(_('Error on copy <%s> to <%s>') % (old_path, new_path))
+				notification.out(_('Error on copy <%s> to <%s>') % (old_path, new_path))
 		
 		update_active_project_language()
 		
@@ -128,29 +132,32 @@ init python:
 		name = get_param('window_title')
 		if not name:
 			name = 'Ren-Engine'
-			notification('window_title not found in resources/params.conf')
+			notification.out('window_title not found in resources/params.conf')
 		
-		exe_path = root + '/Ren-Engine/'
-		for f in os.listdir(exe_path):
+		exe_dir = root + '/Ren-Engine/'
+		exe_path = None
+		for f in os.listdir(exe_dir):
 			if f.endswith('.exe'):
-				os.rename(exe_path + f, exe_path + name + '.exe')
+				exe_path = exe_dir + f
+				if f != name:
+					os.rename(exe_path, exe_dir + name + '.exe')
 				break
 		else:
-			notification('*.exe file not found in /Ren-Engine')
+			notification.out('*.exe file not found in /Ren-Engine')
 		
 		icon_path = get_param('window_icon')
 		if icon_path:
 			icon_path = root + '/resources/' + icon_path
 			if not os.path.exists(icon_path):
-				notification('Icon from <params.conf> not found')
+				notification.out('Icon from <params.conf> not found')
 			else:
 				try:
 					ico.set(root + '/start.exe', icon_path)
 				except Exception as e:
-					notification(_('Error on update icon for start.exe: %s') % str(e))
+					notification.out(_('Error on update icon for <%s>: %s') % ('start.exe', str(e)))
 		
 		if out_msg_ok:
-			notification('Ren-Engine updated')
+			notification.out('Ren-Engine updated')
 	
 	def start_project():
 		root = projects_dir + '/' + active_project
@@ -183,6 +190,6 @@ init python:
 				zf.writestr(project_path + '/empty.txt', '')
 		zf.close()
 		
-		notification('Zip built')
+		notification.out('Zip built')
 	
 	

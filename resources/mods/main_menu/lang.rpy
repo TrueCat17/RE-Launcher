@@ -82,6 +82,6 @@ init -1000 python:
 			f.write(get_code_for_set_lang(active_project_language))
 		
 		update_active_project_language()
-		notification('Language updated')
+		notification.out('Language updated')
 	
 	

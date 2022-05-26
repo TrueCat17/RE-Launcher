@@ -3,7 +3,7 @@ init python:
 		var = projects_dir + '/' + active_project + '/var'
 		if os.path.exists(var):
 			shutil.rmtree(var)
-		notification('Variable data deleted')
+		notification.out('Variable data deleted')
 
 screen extra:
 	image back:

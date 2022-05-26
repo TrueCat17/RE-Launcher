@@ -24,8 +24,8 @@ translate russian strings:
 	old 'Icon from <params.conf> not found'
 	new 'Иконка из <params.conf> не найдена'
 	
-	old 'Error on update icon for start.exe: %s'
-	new 'Ошибка при обновлении иконки для start.exe %s'
+	old 'Error on update icon for <%s>: %s'
+	new 'Ошибка при обновлении иконки для <%s>: %s'
 	
 	old 'Ren-Engine updated'
 	new 'Ren-Engine обновлён'

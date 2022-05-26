@@ -16,12 +16,12 @@ init python:
 	
 	def create_new_project():
 		if not new_project_name or new_project_name.isspace():
-			notification('Input project name')
+			notification.out('Input project name')
 			return
 		
 		new_dir = projects_dir + '/' + new_project_name
 		if os.path.exists(new_dir):
-			notification(_('Directory already exists:\n%s') % new_dir)
+			notification.out(_('Directory already exists:\n%s') % new_dir)
 			return
 		os.mkdir(new_dir)
 		
@@ -32,7 +32,7 @@ init python:
 		update_projects(projects_dir)
 		
 		hide_screen('new')
-		notification(_('Project created') + ':\n' + new_dir)
+		notification.out(_('Project created') + ':\n' + new_dir)
 	
 	def copy_directory(src, dst):
 		if not src.endswith('/'):
