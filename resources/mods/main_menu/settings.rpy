@@ -27,18 +27,18 @@ screen settings:
 					
 					textbutton '<-':
 						action SetVariable('pdl_page_index', max(0, pdl_page_index - 1))
-						alpha (0 if pdl_page_index == 0 else 1)
+						alpha 0 if pdl_page_index == 0 else 1
 						xsize 50
 						font 'Monospace'
 					
 					text (str(pdl_page_index + 1) + '/' + str(pdl_page_count)):
 						font 'Monospace'
 						text_size 20
-						alpha (0 if pdl_page_count <= 1 else 1)
+						alpha 0 if pdl_page_count <= 1 else 1
 					
 					textbutton '->':
 						action SetVariable('pdl_page_index', min(pdl_page_count - 1, pdl_page_index + 1))
-						alpha (0 if pdl_page_count == 0 or pdl_page_index == pdl_page_count - 1 else 1)
+						alpha 0 if pdl_page_count == 0 or pdl_page_index == pdl_page_count - 1 else 1
 						xsize 50
 						font 'Monospace'
 					

@@ -30,6 +30,7 @@ init python:
 		select_project(new_project_name)
 		update_project_engine(False)
 		update_projects(projects_dir)
+		set_active_project_language(config.language, out_msg_ok = False)
 		
 		hide_screen('new')
 		notification.out(_('Project created') + ':\n' + new_dir)

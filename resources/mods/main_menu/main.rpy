@@ -1,9 +1,9 @@
 init 10 python:
 	set_fps(20)
 	set_can_mouse_hide(False)
-	set_can_autosave(False)
+	config.has_autosave = False
 	
-	db.hide_interface = True # for disable pause-menu in screen <hotkeys>
+	pause_screen.disable = True
 	start_screens = ['hotkeys', 'main_menu']
 	
 	back  = im.rect('#4B4')
@@ -56,18 +56,18 @@ screen main_menu:
 					
 					textbutton '<-':
 						action SetVariable('pl_page_index', max(0, pl_page_index - 1))
-						alpha (0 if pl_page_index == 0 else 1)
+						alpha 0 if pl_page_index == 0 else 1
 						xsize 50
 						font 'Monospace'
 					
 					text (str(pl_page_index + 1) + '/' + str(pl_page_count)):
 						font 'Monospace'
 						text_size 20
-						alpha (0 if pl_page_count <= 1 else 1)
+						alpha 0 if pl_page_count <= 1 else 1
 					
 					textbutton '->':
 						action SetVariable('pl_page_index', min(pl_page_count - 1, pl_page_index + 1))
-						alpha (0 if pl_page_count == 0 or pl_page_index == pl_page_count - 1 else 1)
+						alpha 0 if pl_page_count == 0 or pl_page_index == pl_page_count - 1 else 1
 						xsize 50
 						font 'Monospace'
 				

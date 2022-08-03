@@ -1,9 +1,9 @@
 init 1 python:
 	set_fps(30)
 	set_can_mouse_hide(False)
-	set_can_autosave(False)
+	config.has_autosave = False
 	
-	db.hide_interface = True # for disable pause-menu in screen <hotkeys>
+	pause_screen.disable = True
 	start_screens = ['hotkeys', 'all_locations', 'menu']
 	
 	need_save_locations = False

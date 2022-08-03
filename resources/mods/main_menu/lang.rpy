@@ -55,7 +55,7 @@ init -1000 python:
 					shutil.copyfile(tl_path_launcher + f, tl_path_active + f)
 					break
 	
-	def set_active_project_language(lang):
+	def set_active_project_language(lang, out_msg_ok = True):
 		global active_project_language
 		active_project_language = lang
 		
@@ -82,6 +82,7 @@ init -1000 python:
 			f.write(get_code_for_set_lang(active_project_language))
 		
 		update_active_project_language()
-		notification.out('Language updated')
+		if out_msg_ok:
+			notification.out('Language updated')
 	
 	
