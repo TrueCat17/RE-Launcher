@@ -18,8 +18,11 @@ init 10 python:
 	style.textbutton.text_size = 20
 	style.textbutton.font = 'Arial'
 	
+	style.button.ground = im.rect('#08F')
+	style.button.hover  = im.rect('#09F')
 	
-	console_background_alpha = 0.6
+	
+	console.background_alpha = 0.6
 	
 	
 	def open_documentation():
