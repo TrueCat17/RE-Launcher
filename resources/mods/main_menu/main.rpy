@@ -130,7 +130,7 @@ screen main_menu:
 		align (0.95, 0.95)
 		spacing 5
 		
-		textbutton _('Console')  xsize 120 action Show('console')
+		textbutton _('Console')  xsize 120 action console.show
 		textbutton _('Settings') xsize 120 action Show('settings')
 		textbutton _('Exit')     xsize 120 action exit_from_game
 
