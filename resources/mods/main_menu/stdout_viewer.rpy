@@ -1,46 +1,52 @@
 init python:
-	stdout_viewer_lines = []
-	started_procs = []
+	def stdout_viewer__add_proc(proc):
+		stdout_viewer.started_procs.append(proc)
 	
-	def add_proc(proc):
-		started_procs.append(proc)
-	
-	def stdout_viewer_check():
+	def stdout_viewer__check():
 		i = 0
-		while i < len(started_procs):
-			proc = started_procs[i]
+		while i < len(stdout_viewer.started_procs):
+			proc = stdout_viewer.started_procs[i]
 			rc = proc.poll()
 			if rc is None:
 				i += 1
 				continue
 			
-			started_procs.pop(i)
+			stdout_viewer.started_procs.pop(i)
 			
-			stdout_viewer_lines.append('-' * 20)
+			stdout_viewer.lines.append('-' * 20)
 			out = proc.stdout.read()
-			stdout_viewer_lines.extend(out.split('\n'))
+			stdout_viewer.lines.extend(out.split('\n'))
 			if rc:
-				stdout_viewer_lines.append('Error exit code')
+				stdout_viewer.lines.append('Error exit code')
 	
-	def stdout_viewer_clear():
-		global stdout_viewer_lines
-		stdout_viewer_lines = []
+	def stdout_viewer__clear():
+		stdout_viewer.lines = []
+	
+	build_object('stdout_viewer')
+	stdout_viewer.lines = []
+	stdout_viewer.started_procs = []
 
 
 screen stdout_viewer:
-	image back:
+	image theme.back_bg:
 		size 1.0
 	
 	vbox:
-		yalign 1.0
+		xalign 0.5
+		ypos 0.92
+		yanchor 1.0
 		
-		$ stdout_viewer_check()
-		for line in stdout_viewer_lines:
-			text line
-		
-		null ysize 30
+		$ stdout_viewer.check()
+		for line in stdout_viewer.lines[-60:]:
+			text line:
+				xsize 0.95
+				font  theme.version_text_font
+				color theme.version_text_color
 	
 	key 'ESCAPE' action Hide('stdout_viewer')
 	textbutton _('Return'):
-		align (0.95, 0.95)
+		align (0.03, 0.97)
+		xsize 150
+		ground im.round_rect(theme.btn_ground_color, 150, btn_ysize, 4)
+		hover  im.round_rect(theme.btn_hover_color,  150, btn_ysize, 4)
 		action HideScreen('stdout_viewer')

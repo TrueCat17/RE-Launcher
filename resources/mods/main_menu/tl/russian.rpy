@@ -63,8 +63,8 @@ translate russian strings:
 	old 'New Project'
 	new 'Новый Проект'
 	
-	old 'Active Project'
-	new 'Активный Проект'
+	old 'Open file'
+	new 'Открыть файл'
 	
 	old 'Open directory'
 	new 'Открыть директорию'
@@ -133,14 +133,22 @@ translate russian strings:
 	old 'Window size'
 	new 'Размер окна'
 	
-	old 'Fullscreen'
-	new 'Полный экран'
-	
-	old 'On'
-	new 'Вкл'
-	
-	old 'Off'
-	new 'Выкл'
+	old 'Themes'
+	new 'Темы'
 	
 	old 'Return'
 	new 'Вернуться'
+	
+	
+	# themes
+	old 'Day'
+	new 'День'
+	
+	old 'Night'
+	new 'Ночь'
+	
+	old 'Green'
+	new 'Зелень'
+	
+	old 'Contrast'
+	new 'Контраст'

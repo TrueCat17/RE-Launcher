@@ -1,36 +1,24 @@
 init python:
-	new_project_name = ''
-	new_project_genre = 'vn'
+	def new_project__set_name(name):
+		new_project.name = name
 	
-	new_project_genres = ('vn', 'rpg', 'other')
-	new_project_genre_names = {
-		'vn': 'Visual Novell',
-		'rpg': 'RPG',
-		'other': 'Other',
-	}
-	
-	
-	def set_new_project_name(name):
-		global new_project_name
-		new_project_name = name
-	
-	def create_new_project():
-		if not new_project_name or new_project_name.isspace():
+	def new_project__create():
+		if not new_project.name or new_project.name.isspace():
 			notification.out('Input project name')
 			return
 		
-		new_dir = projects_dir + '/' + new_project_name
+		new_dir = projects_dir + '/' + new_project.name
 		if os.path.exists(new_dir):
 			notification.out(_('Directory already exists:\n%s') % new_dir)
 			return
 		os.mkdir(new_dir)
 		
 		copy_directory(launcher_dir + '/templates/common/resources', new_dir + '/resources')
-		copy_directory(launcher_dir + '/templates/' + new_project_genre + '/resources', new_dir + '/resources')
-		select_project(new_project_name)
-		update_project_engine(False)
-		update_projects(projects_dir)
-		set_active_project_language(config.language, out_msg_ok = False)
+		copy_directory(launcher_dir + '/templates/' + new_project.genre + '/resources', new_dir + '/resources')
+		project.select(new_project.name)
+		project.update_engine(False)
+		update_project_list(projects_dir)
+		project.set_language(config.language, out_msg_ok = False)
 		
 		hide_screen('new')
 		notification.out(_('Project created') + ':\n' + new_dir)
@@ -53,61 +41,100 @@ init python:
 				f_from = os.path.join(path, f)
 				f_to   = os.path.join(dst_path, f)
 				shutil.copyfile(f_from, f_to)
+	
+	
+	build_object('new_project')
+	
+	new_project.name = ''
+	new_project.genre = 'vn'
+	
+	new_project.genres = ('vn', 'rpg', 'other')
+	new_project.genre_names = {
+		'vn': 'Visual Novell',
+		'rpg': 'RPG',
+		'other': 'Other',
+	}
 
 
 screen new:
-	image back:
+	image theme.back_bg:
 		size 1.0
 	
 	vbox:
-		align (0.5, 0.05)
+		align (0.5, 0.15)
 		spacing 20
 		xsize 1.0
 		
-		image im.rect('#F80'):
+		image im.rect(theme.btn_ground_color_active):
 			xalign 0.5
-			size (0.5, 30)
+			size (0.35, 35)
 			
 			text _('New Project'):
 				align 0.5
-				color 0
+				text_size 24
+				font  theme.open_text_font
+				color theme.open_text_color
 		
-		image front:
+		null size 10
+		
+		image theme.front_bg:
 			xalign 0.5
-			size (0.9, 50)
+			size (0.5, 50)
 			
-			textbutton (_('Name') + ': ' + (new_project_name)):
+			textbutton (_('Name') + ': ' + (new_project.name)):
 				align 0.5
 				xsize 350
-				action ask_str(set_new_project_name, new_project_name)
+				ground im.round_rect(theme.btn_ground_color, 350, btn_ysize, 4)
+				hover  im.round_rect(theme.btn_hover_color,  350, btn_ysize, 4)
+				font  theme.btn_text_font
+				color theme.btn_text_color
+				action ask_str(new_project.set_name, new_project.name)
 		
-		image front:
+		image theme.front_bg:
 			xalign 0.5
-			size (0.9, 100)
+			size (0.5, 180)
 			
 			vbox:
 				align 0.5
 				spacing 10
 				
-				text (_('Genre') + ': ' + _(new_project_genre_names[new_project_genre])):
+				text (_('Genre') + ': ' + _(new_project.genre_names[new_project.genre])):
 					xalign 0.5
-					color 0
+					text_size 24
+					font  theme.text_font
+					color theme.text_color
 				
-				hbox:
+				null size 1
+				
+				vbox:
 					xalign 0.5
 					spacing 10
 					
-					for genre in new_project_genres:
-						textbutton _(new_project_genre_names[genre]):
-							xsize 200
-							action SetVariable('new_project_genre', genre)
+					for genre in new_project.genres:
+						textbutton _(new_project.genre_names[genre]):
+							xsize 250
+							ground im.round_rect(theme.btn_ground_color, 250, btn_ysize, 4)
+							hover  im.round_rect(theme.btn_hover_color,  250, btn_ysize, 4)
+							font  theme.btn_text_font
+							color theme.btn_text_color
+							action SetVariable('new_project.genre', genre)
 		
 	
 	textbutton _('Ready'):
-		align (0.95, 0.95)
-		action create_new_project
+		align (0.97, 0.97)
+		xsize 150
+		ground im.round_rect(theme.btn_ground_color, 150, btn_ysize, 4)
+		hover  im.round_rect(theme.btn_hover_color,  150, btn_ysize, 4)
+		font  theme.btn_text_font
+		color theme.btn_text_color
+		action new_project.create
 	
 	key 'ESCAPE' action Hide('new')
 	textbutton _('Return'):
-		align (0.05, 0.95)
+		align (0.03, 0.97)
+		xsize 150
+		ground im.round_rect(theme.btn_ground_color, 150, btn_ysize, 4)
+		hover  im.round_rect(theme.btn_hover_color,  150, btn_ysize, 4)
+		font  theme.btn_text_font
+		color theme.btn_text_color
 		action HideScreen('new')

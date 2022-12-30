@@ -1,6 +1,4 @@
 init -1000 python:
-	active_project_language = 'english'
-	
 	def get_language_from_line(line):
 		if ('config.default_language' not in line) or ('=' not in line):
 			return None, False
@@ -13,8 +11,8 @@ init -1000 python:
 		except:
 			return None, enable_all
 	
-	def get_active_config_path():
-		return projects_dir + '/' + (active_project or 'RE-Launcher') + '/resources/mods/common/config.rpy'
+	def project__get_config_path():
+		return projects_dir + '/' + (project.dir or 'RE-Launcher') + '/resources/mods/common/config.rpy'
 	
 	def get_code_for_set_lang(lang):
 		return (
@@ -22,10 +20,10 @@ init -1000 python:
 			'\t' + 'config.default_language = "' + lang + '"\n'
 		)
 	
-	def get_active_project_language():
+	def project__get_language():
 		lang, enable_all = config.language, False
 		
-		config_path = get_active_config_path()
+		config_path = project.get_config_path()
 		if os.path.exists(config_path):
 			for line in open(config_path, 'rb'):
 				tmp_lang, tmp_enable_all = get_language_from_line(line)
@@ -34,32 +32,30 @@ init -1000 python:
 		
 		return lang, enable_all
 	
-	def update_active_project_language():
+	def project__update_language():
 		tl_path = '/Ren-Engine/rpy/tl/'
 		tl_path_launcher = launcher_dir + '/' + tl_path
-		tl_path_active = projects_dir + '/' + active_project + tl_path
+		tl_path_project = projects_dir + '/' + project.dir + tl_path
 		
-		config_path = get_active_config_path()
+		config_path = project.get_config_path()
 		if not os.path.exists(config_path):
 			f = open(config_path, 'wb')
-			f.write(get_code_for_set_lang(active_project_language))
+			f.write(get_code_for_set_lang(project.language))
 		
-		lang, enable_all = get_active_project_language()
+		lang, enable_all = project.get_language()
 		if not enable_all:
-			if os.path.exists(tl_path_active):
-				shutil.rmtree(tl_path_active)
-			os.mkdir(tl_path_active)
+			if os.path.exists(tl_path_project):
+				shutil.rmtree(tl_path_project)
+			os.mkdir(tl_path_project)
 			
 			for f in os.listdir(tl_path_launcher):
 				if f.endswith(lang + '.rpy'):
-					shutil.copyfile(tl_path_launcher + f, tl_path_active + f)
+					shutil.copyfile(tl_path_launcher + f, tl_path_project + f)
 					break
 	
-	def set_active_project_language(lang, out_msg_ok = True):
-		global active_project_language
-		active_project_language = lang
-		
-		config_path = get_active_config_path()
+	def project__set_language(lang, out_msg_ok = True):
+		project.language = lang
+		config_path = project.get_config_path()
 		
 		if os.path.exists(config_path):
 			lines = open(config_path, 'rb').readlines()
@@ -73,15 +69,15 @@ init -1000 python:
 			if lang:
 				was_lang = True
 				i = line.rfind('=')
-				line = line[:i].rstrip() + ' = "' + active_project_language + '"' + (' # enable all' if enable_all else '') + '\n'
+				line = line[:i].rstrip() + ' = "' + project.language + '"' + (' # enable all' if enable_all else '') + '\n'
 			f.write(line)
 		
 		if not was_lang:
 			if lines and lines[-1].strip():
 				f.write('\n')
-			f.write(get_code_for_set_lang(active_project_language))
+			f.write(get_code_for_set_lang(project.language))
 		
-		update_active_project_language()
+		project.update_language()
 		if out_msg_ok:
 			notification.out('Language updated')
 	
