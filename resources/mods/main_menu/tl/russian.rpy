@@ -1,10 +1,5 @@
 translate russian strings:
 	
-	# ask_str
-	old 'Cancel'
-	new 'Отмена'
-	
-	
 	# projects
 	old 'Prev projects directory is not exists, set default value'
 	new 'Прошлой директории проектов не существует, установлено стандартное значение'

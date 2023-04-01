@@ -7,7 +7,7 @@ screen extra:
 		spacing 10
 		
 		$ btn_params = (
-			(_('Project Language') + ': ' + project.language, Function(ask_str, project.set_language, project.language)),
+			(_('Project Language') + ': ' + project.language, project.ask_lang),
 			(_('Delete Variables') + ' (/var)', project.delete_var_directory),
 			(_('Stdout (from print)') + ' (F6)', Show('stdout_viewer')),
 		)

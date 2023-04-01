@@ -81,4 +81,5 @@ init -1000 python:
 		if out_msg_ok:
 			notification.out('Language updated')
 	
-	
+	def project__ask_lang():
+		input.ask_str(project.set_language, 'Project Language', project.language, allow = alphabet)

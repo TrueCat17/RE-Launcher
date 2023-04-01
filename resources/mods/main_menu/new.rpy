@@ -88,7 +88,7 @@ screen new:
 				hover  im.round_rect(theme.btn_hover_color,  350, btn_ysize, 4)
 				font  theme.btn_text_font
 				color theme.btn_text_color
-				action ask_str(new_project.set_name, new_project.name)
+				action input.ask_str(new_project.set_name, '', new_project.name, allow = alphabet + numbers + '-_.')
 		
 		image theme.front_bg:
 			xalign 0.5

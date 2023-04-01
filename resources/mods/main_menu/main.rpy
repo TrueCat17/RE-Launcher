@@ -1,5 +1,12 @@
 init -1000 python:
 	btn_ysize = 25
+	
+	style.textbutton.ysize = btn_ysize
+	style.textbutton.text_size = 20
+	style.textbutton.font = 'Fregat_bold'
+	
+	style.textbutton.ground = im.rect('#08F')
+	style.textbutton.hover  = im.rect('#F80')
 
 init python:
 	set_fps(20)
@@ -10,10 +17,9 @@ init python:
 	start_screens = ['hotkeys', 'main_menu']
 	
 	
-	style.textbutton.ysize = btn_ysize
-	style.textbutton.text_size = 20
-	style.textbutton.font = 'Fregat_bold'
-	
+	input.reverse_btns = True
+	style.input_button.ground = im.round_rect('#08F', style.input_button.xsize, style.input_button.ysize, 4)
+	style.input_button.hover  = im.round_rect('#F80', style.input_button.xsize, style.input_button.ysize, 4)
 	
 	console.background_alpha = 0.6
 	
