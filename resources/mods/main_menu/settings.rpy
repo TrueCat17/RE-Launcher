@@ -171,7 +171,7 @@ screen settings:
 						xsize 300
 						ground im.round_rect(theme.btn_ground_color, 300, btn_ysize, 4)
 						hover  im.round_rect(theme.btn_hover_color,  300, btn_ysize, 4)
-						action update_project_list(os.path.realpath(projects_dir + '/' + directory))
+						action update_project_list(os.path.join(projects_dir, directory))
 	
 	
 	key 'ESCAPE' action HideScreen('settings')

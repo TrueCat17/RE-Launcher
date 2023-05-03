@@ -39,6 +39,18 @@ init -100 python:
 		global projects_dir
 		if new_dir is None:
 			new_dir = projects_dir
+		
+		new_dir = new_dir.replace('\\', '/')
+		if new_dir.endswith('/..'):
+			i = new_dir.rfind('/', 0, -3)
+			if i != -1:
+				new_dir = new_dir[:i]
+			min_path_len = 1 # /
+			if sys.platform in ('win32', 'cygwin'):
+				min_path_len = 3 # C:/
+			if len(new_dir) < min_path_len:
+				new_dir += '/'
+		
 		if projects_dir != new_dir:
 			projects_dir = persistent.projects_dir = new_dir
 			project.select(None)
@@ -65,10 +77,10 @@ init -100 python:
 		pdl_page_size = int((get_stage_height() * 0.9 - 200) / (btn_ysize + 10))
 		
 		global pl_page_count
-		pl_page_count = int(math.ceil(len(projects_list) / float(pl_page_size)))
+		pl_page_count = int(math.ceil(len(projects_list) / pl_page_size))
 		
 		global pdl_page_count
-		pdl_page_count = int(math.ceil(len(projects_dir_list) / float(pdl_page_size)))
+		pdl_page_count = int(math.ceil(len(projects_dir_list) / pdl_page_size))
 	
 	signals.add('resized_stage', update_project_list)
 	
@@ -91,14 +103,11 @@ init -100 python:
 			notification.out(_('Path <%s> not found') % path)
 			return
 		
-		if sys.platform == 'win32':
+		if sys.platform in ('win32', 'cygwin'):
 			os.startfile(path)
 		else:
 			import subprocess
-			if sys.platform == 'darwin':
-				subprocess.Popen(["open", path])
-			else:
-				subprocess.Popen(["xdg-open", path])
+			subprocess.Popen(['xdg-open', path])
 	
 	def project__get_param(name, project_root = None):
 		if project_root is None:
@@ -106,6 +115,7 @@ init -100 python:
 		
 		params = open(project_root + '/resources/params.conf', 'rb')
 		for line in params:
+			line = str(line, 'utf8')
 			if line.startswith(name):
 				s = line.find('=') + 1
 				e = line.find('#')
@@ -170,7 +180,7 @@ init -100 python:
 	def project__start():
 		root = projects_dir + '/' + project.dir
 		path = root + '/start.'
-		if sys.platform == 'win32':
+		if sys.platform in ('win32', 'cygwin'):
 			path += 'exe'
 		else:
 			path += 'sh'

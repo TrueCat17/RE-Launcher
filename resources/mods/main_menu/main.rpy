@@ -79,7 +79,7 @@ init python:
 		
 		one = im.rect(color, one_width, height)
 		args = [((one_width + empty_width) * count, height)]
-		for i in xrange(count):
+		for i in range(count):
 			args.append(((one_width + empty_width) * i, 0))
 			args.append(one)
 		cache[key] = im.composite(*args)
@@ -257,9 +257,9 @@ screen main_menu:
 			size (0.47, 0.2)
 			yalign 1.0
 			
-			$ text_size = get_stage_height() / 33
-			$ file_btn_xsize = get_stage_width() / 8
-			$ dir_btn_xsize = get_stage_width() / 11
+			$ text_size = get_stage_height() // 33
+			$ file_btn_xsize = get_stage_width() // 8
+			$ dir_btn_xsize = get_stage_width() // 11
 			
 			image get_dotted_line(theme.open_text_color, 6, 4, 200, 2):
 				size (2000, 2)
@@ -268,7 +268,7 @@ screen main_menu:
 			vbox:
 				xpos 10
 				ypos 5
-				spacing get_stage_height() / 45
+				spacing get_stage_height() // 45
 				
 				text (_('Open file') + ':'):
 					size (0.235, text_size + 2)
@@ -303,7 +303,7 @@ screen main_menu:
 			vbox:
 				xalign 1.0
 				ypos 5
-				spacing get_stage_height() / 45
+				spacing get_stage_height() // 45
 				
 				text (_('Open directory') + ':'):
 					size (0.235, text_size + 2)

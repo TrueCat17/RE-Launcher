@@ -26,7 +26,7 @@ init -1000 python:
 		config_path = project.get_config_path()
 		if os.path.exists(config_path):
 			for line in open(config_path, 'rb'):
-				tmp_lang, tmp_enable_all = get_language_from_line(line)
+				tmp_lang, tmp_enable_all = get_language_from_line(str(line, 'utf8'))
 				if tmp_lang:
 					lang, enable_all = tmp_lang, tmp_enable_all
 		
@@ -40,7 +40,7 @@ init -1000 python:
 		config_path = project.get_config_path()
 		if not os.path.exists(config_path):
 			f = open(config_path, 'wb')
-			f.write(get_code_for_set_lang(project.language))
+			f.write(bytes(get_code_for_set_lang(project.language), 'utf8'))
 		
 		lang, enable_all = project.get_language()
 		if not enable_all:
@@ -58,7 +58,7 @@ init -1000 python:
 		config_path = project.get_config_path()
 		
 		if os.path.exists(config_path):
-			lines = open(config_path, 'rb').readlines()
+			lines = [str(i, 'utf8') for i in open(config_path, 'rb')]
 		else:
 			lines = []
 		
@@ -70,12 +70,12 @@ init -1000 python:
 				was_lang = True
 				i = line.rfind('=')
 				line = line[:i].rstrip() + ' = "' + project.language + '"' + (' # enable all' if enable_all else '') + '\n'
-			f.write(line)
+			f.write(bytes(line, 'utf8'))
 		
 		if not was_lang:
 			if lines and lines[-1].strip():
-				f.write('\n')
-			f.write(get_code_for_set_lang(project.language))
+				f.write(b'\n')
+			f.write(bytes(get_code_for_set_lang(project.language), 'utf8'))
 		
 		project.update_language()
 		if out_msg_ok:

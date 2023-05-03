@@ -14,7 +14,7 @@ init python:
 			stdout_viewer.started_procs.pop(i)
 			
 			stdout_viewer.lines.append('-' * 20)
-			out = proc.stdout.read()
+			out = str(proc.stdout.read(), 'utf8')
 			stdout_viewer.lines.extend(out.split('\n'))
 			if rc:
 				stdout_viewer.lines.append('Error exit code')
