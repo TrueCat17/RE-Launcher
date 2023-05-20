@@ -29,7 +29,7 @@ init python:
 		for path in paths + [png_path]:
 			data_sizes[path] = os.path.getsize(path)
 		
-		if (sizes[png_path] == sizes[paths[0]]) and (data_sizes[png_path] < data_sizes[paths[0]]):
+		if sizes[png_path] == sizes[paths[0]] and data_sizes[png_path] < data_sizes[paths[0]]:
 			paths[0] = png_path
 		
 		header_size = 6
@@ -60,14 +60,11 @@ init python:
 		return res_path
 	
 	def ico__set(exe_path, icon_path):
-		# disabled after moving to python3
-		return
-		
 		# make set of png and build ico with it
 		new_icon_path = ico.make(icon_path)
 		
-		# import
-		cur_path = os.path.dirname(os.path.abspath(get_filename(0))) + '/'
+		# import, don't use abs-path (error on cygwin)
+		cur_path = os.path.dirname(get_filename(0)) + '/'
 		cur_path = cur_path.replace('\\', '/')
 		
 		old_value = sys.dont_write_bytecode
