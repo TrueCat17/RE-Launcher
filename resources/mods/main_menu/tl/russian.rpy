@@ -13,8 +13,8 @@ translate russian strings:
 	old 'window_title not found in resources/params.conf'
 	new 'window_title не найден в resources/params.conf'
 	
-	old '*.exe file not found in /Ren-Engine'
-	new 'Файл *.exe не найден в /Ren-Engine'
+	old 'Execution file not found'
+	new 'Исполняемый файл не найден'
 	
 	old 'Icon from <params.conf> not found'
 	new 'Иконка из <params.conf> не найдена'

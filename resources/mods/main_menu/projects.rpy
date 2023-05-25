@@ -127,12 +127,28 @@ init -100 python:
 			notification.out('Disallowed action')
 			return
 		
-		root = projects_dir + '/' + project.dir
+		root = projects_dir + '/' + project.dir + '/'
 		
-		to_copy = ['Ren-Engine', 'start.exe', 'start.sh']
+		name = project.get_param('window_title')
+		if not name:
+			name = 'Ren-Engine'
+			notification.out('window_title not found in resources/params.conf')
+		start_exe = name + '.exe'
+		start_sh = name + '.sh'
+		
+		# delete old files
+		for fn in ('start.exe', 'start.sh', start_exe, start_sh):
+			if os.path.exists(root + fn):
+				os.remove(root + fn)
+		
+		launcher_name = get_from_hard_config('window_title', str)
+		
+		launcher_start_exe = launcher_name + '.exe'
+		launcher_start_sh = launcher_name + '.sh'
+		to_copy = ['Ren-Engine', launcher_start_exe, launcher_start_sh]
 		for path in to_copy:
 			old_path = launcher_dir + '/' + path
-			new_path = root + '/' + path
+			new_path = root + path
 			
 			try:
 				if os.path.isdir(old_path):
@@ -147,21 +163,9 @@ init -100 python:
 		
 		project.update_language()
 		
-		name = project.get_param('window_title')
-		if not name:
-			name = 'Ren-Engine'
-			notification.out('window_title not found in resources/params.conf')
-		
-		exe_dir = root + '/Ren-Engine/'
-		exe_path = None
-		for f in os.listdir(exe_dir):
-			if f.endswith('.exe'):
-				exe_path = exe_dir + f
-				if f != name:
-					os.rename(exe_path, exe_dir + name + '.exe')
-				break
-		else:
-			notification.out('*.exe file not found in /Ren-Engine')
+		os.rename(root + 'Ren-Engine/' + launcher_start_exe, root + 'Ren-Engine/' + start_exe)
+		os.rename(root + launcher_start_exe, root + start_exe)
+		os.rename(root + launcher_start_sh,  root + start_sh)
 		
 		icon_path = project.get_param('window_icon')
 		if icon_path:
@@ -170,20 +174,33 @@ init -100 python:
 				notification.out('Icon from <params.conf> not found')
 			else:
 				try:
-					ico.set(root + '/start.exe', icon_path)
+					ico.set(root + start_exe, icon_path)
 				except Exception as e:
-					notification.out(_('Error on update icon for <%s>: %s') % ('start.exe', str(e)))
+					notification.out(_('Error on update icon for <%s>: %s') % (start_exe, e))
 		
 		if out_msg_ok:
 			notification.out('Ren-Engine updated')
 	
 	def project__start():
-		root = projects_dir + '/' + project.dir
-		path = root + '/start.'
+		root = projects_dir + '/' + project.dir + '/'
+		name = project.get_param('window_title')
+		
 		if sys.platform in ('win32', 'cygwin'):
-			path += 'exe'
+			ext = '.exe'
 		else:
-			path += 'sh'
+			ext = '.sh'
+		
+		if not name:
+			notification.out('window_title not found in resources/params.conf')
+			for fn in os.listdir(root):
+				if fn.endswith(ext):
+					name, ext = os.path.splitext(fn)
+					break
+			else:
+				notification.out('Execution file not found')
+				return
+		
+		path = root + name + ext
 		
 		env = dict(os.environ, RE_LANG=config.language)
 		

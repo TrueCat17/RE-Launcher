@@ -60,6 +60,9 @@ init python:
 		return res_path
 	
 	def ico__set(exe_path, icon_path):
+		# disabled
+		return
+		
 		# make set of png and build ico with it
 		new_icon_path = ico.make(icon_path)
 		

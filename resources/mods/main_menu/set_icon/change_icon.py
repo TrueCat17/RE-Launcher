@@ -290,8 +290,7 @@ def change_icons(oldexe, icofn):
     data = f.read(physize)
 
     #Symbol table, I could not understand so well
-    #  Some analysis and the little I could find on how the symbol tables were layed out show that the PE table is in two sections. One is
-    # a list of NumberOfSymbols*(18 bytes) symbol entries, followed immediately by a string table who's length is specified in the 4 bytes following the symbol structure list
+    #  Some analysis and the little I could find on how the symbol tables were layed out show that the PE table is in two sections. One is a list of NumberOfSymbols*(18 bytes) symbol entries, followed immediately by a string table who's length is specified in the 4 bytes following the symbol structure list
     #Again, the information *seems* to indicate that this will always follow the entire block of all sections (so be at the end of the file)
 
 
@@ -386,7 +385,10 @@ def change_icons(oldexe, icofn):
     #Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
     newFile = pe.write()[:base] + rsrc
     newpe = pefile.PE(data=bytes(newFile))
+    #newpe.DIRECTORY_ENTRY_BASERELOC = pe.DIRECTORY_ENTRY_BASERELOC
+    #newpe.relocate_image(newpe.OPTIONAL_HEADER.ImageBase)
     newpe.OPTIONAL_HEADER.CheckSum = newpe.generate_checksum()
+    newpe.print_info()
 
     return bytes(newpe.write())
 

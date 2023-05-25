@@ -3476,7 +3476,7 @@ class PE:
         else:
             self.RICH_HEADER = None
 
-    def write(self, filename=None):
+    def write(self):
         """Write the PE file.
 
         This function will process all headers and components
@@ -3522,14 +3522,7 @@ class PE:
                                             offsets[1] : offsets[1] + len(encoded_data)
                                         ] = encoded_data
 
-        new_file_data = file_data
-        if not filename:
-            return new_file_data
-
-        f = open(filename, "wb+")
-        f.write(new_file_data)
-        f.close()
-        return
+        return file_data
 
     def parse_sections(self, offset):
         """Fetch the PE file sections.
