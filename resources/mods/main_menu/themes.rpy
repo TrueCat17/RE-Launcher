@@ -18,13 +18,13 @@ init python:
 	day_theme.open_bg  = im.rect('#555588')
 	
 	day_theme.text_font = 'Fregat_bold'
-	day_theme.text_color = 0x555588
+	day_theme.text_color = '#558'
 	
 	day_theme.version_text_font = 'Arial'
-	day_theme.version_text_color = 0x555588
+	day_theme.version_text_color = '#558'
 	
 	day_theme.btn_text_font = 'Fregat_bold'
-	day_theme.btn_text_color = 0xFFFFFF
+	day_theme.btn_text_color = '#FFF'
 	day_theme.btn_ground_color = '#08F'
 	day_theme.btn_hover_color  = '#0AF'
 	day_theme.btn_ground_color_active = '#F80'
@@ -36,10 +36,10 @@ init python:
 	day_theme.open_btn_ground_color = '#00000002'
 	day_theme.open_btn_hover_color  = '#08F'
 	day_theme.open_btn_text_font = 'Arial'
-	day_theme.open_btn_text_color = 0xFFFFFF
+	day_theme.open_btn_text_color = '#FFF'
 	day_theme.open_text_font = 'Fregat_bold'
-	day_theme.open_text_color = 0xFFFFFF
-	day_theme.open_text_color_inactive = 0xAAAAAA
+	day_theme.open_text_color = '#FFF'
+	day_theme.open_text_color_inactive = '#AAA'
 	
 	
 	night_theme = Object(day_theme, name = 'Night')
@@ -47,7 +47,7 @@ init python:
 	
 	night_theme.back_bg = im.rect('#046')
 	night_theme.front_bg = im.rect('#ABC')
-	night_theme.version_text_color = 0xFFFFFF
+	night_theme.version_text_color = '#FFF'
 	night_theme.btn_ground_color = '#07F'
 	night_theme.btn_hover_color  = '#08F'
 	night_theme.btn_ground_color_active = '#F70'
@@ -62,7 +62,7 @@ init python:
 	green_theme.back_bg = im.rect('#4B4')
 	green_theme.front_bg = im.rect('#4D6')
 	green_theme.open_bg  = im.rect('#272')
-	green_theme.text_color = 0x0000FF
+	green_theme.text_color = '#00F'
 	green_theme.version_text_color = green_theme.text_color
 	
 	
@@ -76,7 +76,7 @@ init python:
 	contrast_theme.btn_hover_color  = '#444'
 	contrast_theme.btn_ground_color_active = '#E00'
 	contrast_theme.btn_hover_color_active  = '#F00'
-	contrast_theme.text_color = 0x000000
+	contrast_theme.text_color = '#000'
 	contrast_theme.version_text_color = contrast_theme.text_color
 	
 	

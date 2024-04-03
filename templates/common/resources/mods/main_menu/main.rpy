@@ -14,6 +14,7 @@ screen mods_with_bg:
 	button:
 		ground back_path
 		hover  back_path
+		corner_sizes 0
 		
 		mouse False
 		size 1.0
@@ -37,10 +38,7 @@ screen main_menu:
 			(_('Preferences'), ShowMenu('preferences')),
 			(_('Exit'), exit_from_game),
 		)
-		$ tmp_style = style.menu_button
 		for text, action in btn_params:
 			textbutton text:
-				style tmp_style
-				ground tmp_style.get_ground()
-				hover  tmp_style.get_hover()
+				style 'menu_button'
 				action action
