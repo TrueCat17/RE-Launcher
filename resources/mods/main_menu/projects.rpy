@@ -211,18 +211,20 @@ init -100 python:
 	def project__build():
 		zip_path = projects_dir + '/' + project.dir + '.zip'
 		
+		var_path = project.dir + '/var'
+		
 		import zipfile
 		zf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
 		for path, dirs, files in os.walk(projects_dir + '/' + project.dir):
 			project_path = path[len(projects_dir) + 1:]
-			if project_path.startswith(project.dir + '/var'):
+			if project_path.startswith(var_path):
 				continue
 			
-			for f in files:
-				zf.write(path + '/' + f, project_path + '/' + f)
-			
-			if not dirs and not files:
-				zf.writestr(project_path + '/empty.txt', '')
+			for f in dirs + files:
+				path_from = path + '/' + f
+				path_to = project_path + '/' + f
+				if path_to != var_path:
+					zf.write(path_from, path_to)
 		zf.close()
 		
 		notification.out('Zip built')
