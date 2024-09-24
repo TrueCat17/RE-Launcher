@@ -24,6 +24,10 @@ init python:
 	console.background_alpha = 0.6
 	
 	
+	def check_updates():
+		reus.scan_links()
+		reus.check_and_load('')
+	
 	def open_documentation():
 		import webbrowser
 		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
@@ -57,7 +61,7 @@ init python:
 		if not project.dir:
 			return
 		
-		root = projects_dir + '/' + project.dir + '/resources/'
+		root = projects_dir + project.dir + '/resources/'
 		
 		for files in files_to_open:
 			for _name, path in files:
@@ -134,33 +138,6 @@ screen main_menu:
 			image get_dotted_line(theme.text_color, 10, 4, 100, 3):
 				size (1400, 3)
 			
-			hbox:
-				xalign 0.5
-				spacing 10
-				
-				textbutton '<-':
-					xsize 50
-					ground im.round_rect(theme.btn_ground_color, 50, btn_ysize, 4)
-					hover  im.round_rect(theme.btn_hover_color,  50, btn_ysize, 4)
-					font  theme.btn_text_font
-					color theme.btn_text_color
-					action SetVariable('pl_page_index', max(0, pl_page_index - 1))
-					alpha 0 if pl_page_index == 0 else 1
-				
-				text (str(pl_page_index + 1) + '/' + str(pl_page_count)):
-					font  theme.text_font
-					color theme.text_color
-					alpha 0 if pl_page_count <= 1 else 1
-				
-				textbutton '->':
-					xsize 50
-					ground im.round_rect(theme.btn_ground_color, 50, btn_ysize, 4)
-					hover  im.round_rect(theme.btn_hover_color,  50, btn_ysize, 4)
-					font  theme.btn_text_font
-					color theme.btn_text_color
-					action SetVariable('pl_page_index', min(pl_page_count - 1, pl_page_index + 1))
-					alpha 0 if pl_page_count == 0 or pl_page_index == pl_page_count - 1 else 1
-			
 			vbox:
 				xalign 0.5
 				spacing 10
@@ -175,15 +152,53 @@ screen main_menu:
 						color theme.btn_text_color
 						text_align 'center'
 						action project.select(project_dir)
+		
+		vbox:
+			xalign 0.5
+			yalign 1.0
+			
+			null ysize 10
+			
+			hbox:
+				spacing 10
+				
+				textbutton '<-':
+					xsize 50
+					yalign 0.5
+					ground im.round_rect(theme.btn_ground_color, 50, btn_ysize, 4)
+					hover  im.round_rect(theme.btn_hover_color,  50, btn_ysize, 4)
+					font  theme.btn_text_font
+					color theme.btn_text_color
+					action SetVariable('pl_page_index', max(0, pl_page_index - 1))
+					alpha 0 if pl_page_index == 0 else 1
+				
+				text (str(pl_page_index + 1) + '/' + str(pl_page_count)):
+					yalign 0.5
+					font  theme.text_font
+					color theme.text_color
+					alpha 0 if pl_page_count <= 1 else 1
+				
+				textbutton '->':
+					xsize 50
+					yalign 0.5
+					ground im.round_rect(theme.btn_ground_color, 50, btn_ysize, 4)
+					hover  im.round_rect(theme.btn_hover_color,  50, btn_ysize, 4)
+					font  theme.btn_text_font
+					color theme.btn_text_color
+					action SetVariable('pl_page_index', min(pl_page_count - 1, pl_page_index + 1))
+					alpha 0 if pl_page_count == 0 or pl_page_index == pl_page_count - 1 else 1
+			
+			null ysize 10
 	
 	vbox:
 		xpos 0.02
 		ypos int(get_stage_height() * 0.67 + get_stage_width() * 0.02)
 		xsize 0.47
 		spacing 10
-			
+		
 		$ btn_params = (
 			(_('New Project'),   Show('new'),        theme.btn_ground_color_active, theme.btn_hover_color_active),
+			(_('Check updates'), check_updates,      theme.doc_btn_ground_color,    theme.doc_btn_hover_color),
 			(_('Documentation'), open_documentation, theme.doc_btn_ground_color,    theme.doc_btn_hover_color),
 		)
 		for text, action, ground_color, hover_color in btn_params:
@@ -251,7 +266,7 @@ screen main_menu:
 				
 				key 'F5' action project.start
 				key 'F6' action Show('stdout_viewer')
-	
+		
 		image theme.open_bg:
 			clipping True
 			size (0.47, 0.2)

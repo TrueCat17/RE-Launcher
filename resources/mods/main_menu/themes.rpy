@@ -6,7 +6,7 @@ init python:
 			if i.name == name:
 				global theme
 				theme = i
-				persistent.theme_name = i.name
+				persistent.theme_name = name
 				break
 	
 	

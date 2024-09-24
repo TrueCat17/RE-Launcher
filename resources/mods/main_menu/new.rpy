@@ -7,14 +7,14 @@ init python:
 			notification.out('Input project name')
 			return
 		
-		new_dir = projects_dir + '/' + new_project.name
+		new_dir = projects_dir + new_project.name + '/'
 		if os.path.exists(new_dir):
 			notification.out(_('Directory already exists:\n%s') % new_dir)
 			return
 		os.mkdir(new_dir)
 		
-		copy_directory(launcher_dir + '/templates/common/resources', new_dir + '/resources')
-		copy_directory(launcher_dir + '/templates/' + new_project.genre + '/resources', new_dir + '/resources')
+		copy_directory(launcher_dir + 'templates/common/resources', new_dir + 'resources')
+		copy_directory(launcher_dir + 'templates/' + new_project.genre + '/resources', new_dir + 'resources')
 		project.select(new_project.name)
 		project.update_engine(False)
 		update_project_list(projects_dir)
@@ -24,22 +24,20 @@ init python:
 		notification.out(_('Project created') + ':\n' + new_dir)
 	
 	def copy_directory(src, dst):
-		if not src.endswith('/'):
-			src += '/'
-		if not dst.endswith('/'):
-			dst += '/'
+		src = make_sure_dir(src)
+		dst = make_sure_dir(dst)
 		
 		for path, ds, fs in os.walk(src):
-			dst_path = os.path.join(dst, path[len(src):])
+			path = make_sure_dir(path)
+			dst_path = dst + path[len(src):]
 			
 			for d in ds:
-				d = os.path.join(dst_path, d)
-				if not os.path.exists(d):
-					os.makedirs(d)
+				d = dst_path + d
+				os.makedirs(d, exist_ok = True)
 			
 			for f in fs:
-				f_from = os.path.join(path, f)
-				f_to   = os.path.join(dst_path, f)
+				f_from = path + f
+				f_to   = dst_path + f
 				shutil.copyfile(f_from, f_to)
 	
 	

@@ -28,6 +28,9 @@ translate russian strings:
 	old 'Zip built'
 	new 'Zip собран'
 	
+	old 'Building has already started'
+	new 'Сборка уже начата'
+	
 	
 	# extra
 	old 'Project Language'
@@ -75,6 +78,9 @@ translate russian strings:
 	
 	old 'Extra...'
 	new 'Дополнительно...'
+	
+	old 'Check updates'
+	new 'Проверить обновления'
 	
 	old 'Documentation'
 	new 'Документация'

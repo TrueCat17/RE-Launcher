@@ -9,9 +9,7 @@ init -100 python:
 	pdl_page_size = 6
 	
 	
-	launcher_dir = os.path.abspath(get_filename(0)).replace('\\', '/')
-	i = launcher_dir.rfind('/resources')
-	launcher_dir = launcher_dir[:i]
+	launcher_dir = get_root_dir()
 	
 	
 	def load_persistent_data():
@@ -21,12 +19,12 @@ init -100 python:
 			if persistent.projects_dir is not None:
 				notification.out('Prev projects directory is not exists, set default value')
 				persistent.active_project = None
-			persistent.projects_dir = os.path.dirname(launcher_dir)
+			persistent.projects_dir = os.path.dirname(launcher_dir[:-1]) + '/'
 		
 		projects_dir = persistent.projects_dir
 		project.dir = persistent.active_project
 		
-		if project.dir and not os.path.exists(projects_dir + '/' + project.dir):
+		if project.dir and not os.path.exists(projects_dir + project.dir):
 			project.dir = persistent.active_project = None
 		if project.dir:
 			project.select(project.dir)
@@ -39,10 +37,10 @@ init -100 python:
 		global projects_dir
 		if new_dir is None:
 			new_dir = projects_dir
+		new_dir = make_sure_dir(new_dir)
 		
-		new_dir = new_dir.replace('\\', '/')
-		if new_dir.endswith('/..'):
-			i = new_dir.rfind('/', 0, -3)
+		if new_dir.endswith('/../'):
+			i = new_dir.rfind('/', 0, -4)
 			if i != -1:
 				new_dir = new_dir[:i]
 			min_path_len = 1 # /
@@ -50,6 +48,7 @@ init -100 python:
 				min_path_len = 3 # C:/
 			if len(new_dir) < min_path_len:
 				new_dir += '/'
+			new_dir = make_sure_dir(new_dir)
 		
 		if projects_dir != new_dir:
 			projects_dir = persistent.projects_dir = new_dir
@@ -58,14 +57,14 @@ init -100 python:
 		global projects_dir_list
 		projects_dir_list = ['..']
 		for d in os.listdir(projects_dir):
-			if os.path.isdir(projects_dir + '/' + d):
+			if os.path.isdir(projects_dir + d):
 				projects_dir_list.append(d)
 		projects_dir_list.sort()
 		
 		global projects_list
 		projects_list = []
 		for d in projects_dir_list:
-			if d != '..' and os.path.exists(projects_dir + '/' + d + '/resources/mods'):
+			if d != '..' and os.path.exists(projects_dir + d + '/resources/mods'):
 				projects_list.append(d)
 		projects_list.sort()
 		
@@ -98,7 +97,7 @@ init -100 python:
 		check_exists_files_and_dirs()
 	
 	def project__open(path = ''):
-		path = projects_dir + '/' + project.dir + '/' + path
+		path = projects_dir + project.dir + '/' + path
 		if not os.path.exists:
 			notification.out(_('Path <%s> not found') % path)
 			return
@@ -111,7 +110,7 @@ init -100 python:
 	
 	def project__get_param(name, project_root = None):
 		if project_root is None:
-			project_root = projects_dir + '/' + project.dir
+			project_root = projects_dir + project.dir
 		
 		params = open(project_root + '/resources/params.conf', 'rb')
 		for line in params:
@@ -127,7 +126,7 @@ init -100 python:
 			notification.out('Disallowed action')
 			return
 		
-		root = projects_dir + '/' + project.dir + '/'
+		root = projects_dir + project.dir + '/'
 		
 		name = project.get_param('window_title')
 		if not name:
@@ -147,7 +146,7 @@ init -100 python:
 		launcher_start_sh = launcher_name + '.sh'
 		to_copy = ['Ren-Engine', launcher_start_exe, launcher_start_sh]
 		for path in to_copy:
-			old_path = launcher_dir + '/' + path
+			old_path = launcher_dir + path
 			new_path = root + path
 			
 			try:
@@ -182,7 +181,7 @@ init -100 python:
 			notification.out('Ren-Engine updated')
 	
 	def project__start():
-		root = projects_dir + '/' + project.dir + '/'
+		root = projects_dir + project.dir + '/'
 		name = project.get_param('window_title')
 		
 		if sys.platform in ('win32', 'cygwin'):
@@ -208,29 +207,58 @@ init -100 python:
 		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=False, env=env)
 		stdout_viewer.add_proc(proc)
 	
+	
 	def project__build():
-		zip_path = projects_dir + '/' + project.dir + '.zip'
+		if 'zip_paths' in dont_save:
+			notification.out(_('Building has already started') + ' (%s/%s)' % (dont_save.zip_paths_added, len(dont_save.zip_paths)))
+			return
+		
+		zip_path = projects_dir + project.dir + '.zip'
 		
 		var_path = project.dir + '/var'
 		
 		import zipfile
-		zf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
-		for path, dirs, files in os.walk(projects_dir + '/' + project.dir):
-			project_path = path[len(projects_dir) + 1:]
+		zf = dont_save.zf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+		
+		zip_paths = dont_save.zip_paths = []
+		dont_save.zip_paths_added = 0
+		
+		for path, dirs, files in os.walk(projects_dir + project.dir):
+			path = make_sure_dir(path)
+			
+			project_path = path[len(projects_dir):]
 			if project_path.startswith(var_path):
 				continue
 			
 			for f in dirs + files:
-				path_from = path + '/' + f
-				path_to = project_path + '/' + f
+				path_from = path + f
+				path_to = project_path + f
 				if path_to != var_path:
-					zf.write(path_from, path_to)
-		zf.close()
+					zip_paths.append((path_from, path_to))
 		
-		notification.out('Zip built')
+		interruptable_while(project.add_to_zip)
+	
+	def project__add_to_zip():
+		if 'zip_paths_added' not in dont_save: # will never be True (no saving/loading in Launcher), but... this is good style
+			return True
+		
+		path_from, path_to = dont_save.zip_paths[dont_save.zip_paths_added]
+		dont_save.zip_paths_added += 1
+		dont_save.zf.write(path_from, path_to)
+		
+		if dont_save.zip_paths_added == len(dont_save.zip_paths):
+			dont_save.zf.close()
+			del dont_save.zf
+			del dont_save.zip_paths
+			del dont_save.zip_paths_added
+			notification.out('Zip built')
+			return True
+		
+		return False
+	
 	
 	def project__delete_var_directory():
-		var = projects_dir + '/' + project.dir + '/var'
+		var = projects_dir + project.dir + '/var'
 		if os.path.exists(var):
 			shutil.rmtree(var)
 		notification.out('Variable data deleted')

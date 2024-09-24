@@ -12,7 +12,7 @@ init -1000 python:
 			return None, enable_all
 	
 	def project__get_config_path():
-		return projects_dir + '/' + (project.dir or 'RE-Launcher') + '/resources/mods/common/config.rpy'
+		return projects_dir + (project.dir or 'RE-Launcher') + '/resources/mods/common/config.rpy'
 	
 	def get_code_for_set_lang(lang):
 		return (
@@ -34,8 +34,8 @@ init -1000 python:
 	
 	def project__update_language():
 		tl_path = '/Ren-Engine/rpy/tl/'
-		tl_path_launcher = launcher_dir + '/' + tl_path
-		tl_path_project = projects_dir + '/' + project.dir + tl_path
+		tl_path_launcher = launcher_dir + tl_path
+		tl_path_project = projects_dir + project.dir + tl_path
 		
 		config_path = project.get_config_path()
 		if not os.path.exists(config_path):
