@@ -210,7 +210,6 @@ init -100 python:
 	
 	def project__build():
 		if 'zip_paths' in dont_save:
-			notification.out(_('Building has already started') + ' (%s/%s)' % (dont_save.zip_paths_added, len(dont_save.zip_paths)))
 			return
 		
 		zip_path = projects_dir + project.dir + '.zip'
@@ -236,7 +235,13 @@ init -100 python:
 				if path_to != var_path:
 					zip_paths.append((path_from, path_to))
 		
+		notification.out(project.get_zip_progress)
 		interruptable_while(project.add_to_zip)
+	
+	def project__get_zip_progress():
+		if 'zip_paths' not in dont_save:
+			return None
+		return int(dont_save.zip_paths_added / len(dont_save.zip_paths) * 100)
 	
 	def project__add_to_zip():
 		if 'zip_paths_added' not in dont_save: # will never be True (no saving/loading in Launcher), but... this is good style

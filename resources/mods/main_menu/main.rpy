@@ -28,6 +28,17 @@ init python:
 		reus.scan_links()
 		reus.check_and_load('')
 	
+	def show_loading_progress():
+		progress = reus.get_loading_progress()
+		if not progress:
+			return None
+		
+		loaded, size_to_load = progress
+		return '%s: %s/%s %s' % (_('Loaded'), loaded, size_to_load, _('MB'))
+	
+	signals.add('reus_load', Function(notification.out, show_loading_progress))
+	
+	
 	def open_documentation():
 		import webbrowser
 		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
