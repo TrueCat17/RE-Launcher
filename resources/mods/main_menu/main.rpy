@@ -43,7 +43,7 @@ init python:
 		import webbrowser
 		webbrowser.open('https://github.com/TrueCat17/Ren-Engine/wiki')
 	
-	notification.align = (1.0, 1.0)
+	notification.align = (1.0, 0.0)
 	
 	
 	files_to_open = (
@@ -133,18 +133,18 @@ screen main_menu:
 					size  (150, 30)
 					spacing 7
 					
-					text _('Refresh'):
-						yalign 0.5
-						font  theme.version_text_font
-						color theme.text_color
-						text_size 20
-						ysize 20
 					button:
 						yalign 0.5
 						size (40, 36)
 						ground theme.refresh_btn_ground
 						hover  theme.refresh_btn_hover
 						action update_project_list()
+					text _('Refresh'):
+						yalign 0.5
+						font  theme.version_text_font
+						color theme.text_color
+						text_size 20
+						ysize 20
 			
 			image get_dotted_line(theme.text_color, 10, 4, 100, 3):
 				size (1400, 3)
