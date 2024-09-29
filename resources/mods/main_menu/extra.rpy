@@ -7,9 +7,9 @@ screen extra:
 		spacing 10
 		
 		$ btn_params = (
+			(_('Open Log File') + ' (F6)', project.open_log_file),
 			(_('Project Language') + ': ' + project.language, project.ask_lang),
 			(_('Delete Variables') + ' (/var)', project.delete_var_directory),
-			(_('Stdout (from print)') + ' (F6)', Show('stdout_viewer')),
 		)
 		for text, action in btn_params:
 			textbutton text:

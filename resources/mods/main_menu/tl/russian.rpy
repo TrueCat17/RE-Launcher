@@ -33,6 +33,9 @@ translate russian strings:
 	
 	
 	# extra
+	old 'Open Log File'
+	new 'Открыть файл журнала'
+	
 	old 'Project Language'
 	new 'Язык проекта'
 	
@@ -41,9 +44,6 @@ translate russian strings:
 	
 	old 'Variable data deleted'
 	new 'Переменные данные удалены'
-	
-	old 'Stdout (from print)'
-	new 'Вывод (из print)'
 	
 	
 	# lang

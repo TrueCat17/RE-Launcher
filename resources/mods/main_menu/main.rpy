@@ -276,7 +276,7 @@ screen main_menu:
 						action action
 				
 				key 'F5' action project.start
-				key 'F6' action Show('stdout_viewer')
+				key 'F6' action project.open_log_file
 		
 		image theme.open_bg:
 			clipping True
@@ -379,4 +379,3 @@ screen main_menu:
 				font  theme.btn_text_font
 				color theme.btn_text_color
 				action action
-

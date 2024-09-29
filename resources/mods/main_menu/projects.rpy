@@ -93,7 +93,6 @@ init -100 python:
 	def project__select(project_dir):
 		project.dir = persistent.active_project = project_dir
 		project.language, project.enable_all = project.get_language()
-		stdout_viewer.clear()
 		check_exists_files_and_dirs()
 	
 	def project__open(path = ''):
@@ -104,9 +103,35 @@ init -100 python:
 		
 		if sys.platform in ('win32', 'cygwin'):
 			os.startfile(path)
-		else:
-			import subprocess
-			subprocess.Popen(['xdg-open', path])
+			return
+		
+		def get_app():
+			while True:
+				tmp = '/tmp/' + str(random.randint(0, 999999))
+				if not os.path.exists(tmp):
+					break
+			
+			try:
+				if os.system('xdg-mime query filetype "' + path + '" > ' + tmp): return ''
+				
+				file_type = open(tmp, 'rb').read().decode('utf-8').strip()
+				if os.system('xdg-mime query default "' + file_type + '" > ' + tmp): return ''
+				
+				desktop_file = open(tmp, 'rb').read().decode('utf-8').strip()
+				if not desktop_file.endswith('.desktop'): return ''
+				
+				res = desktop_file[:-len('.desktop')]
+				if os.system('command -v ' + res + ' > /dev/null'): return ''
+				
+				return res
+			finally:
+				if os.path.exists(tmp):
+					os.remove(tmp)
+		
+		app = get_app() or 'xdg-open'
+		
+		import subprocess
+		subprocess.Popen([app, path])
 	
 	def project__get_param(name, project_root = None):
 		if project_root is None:
@@ -204,8 +229,10 @@ init -100 python:
 		env = dict(os.environ, RE_LANG=config.language)
 		
 		import subprocess
-		proc = subprocess.Popen([path], stdout=subprocess.PIPE, cwd=root, close_fds=False, env=env)
-		stdout_viewer.add_proc(proc)
+		subprocess.Popen([path], cwd=root, env=env)
+	
+	def project__open_log_file():
+		project.open('var/log.txt')
 	
 	
 	def project__build():
