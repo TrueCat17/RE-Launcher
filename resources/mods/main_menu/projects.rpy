@@ -102,7 +102,13 @@ init -100 python:
 			return
 		
 		if sys.platform in ('win32', 'cygwin'):
-			os.startfile(path)
+			if path.endswith('.exe'):
+				vars = ['%s=%s' % (k, v) for k, v in os.environ.items()]
+			else:
+				vars = []
+			ok = os.startfile(path, vars)
+			if not ok:
+				notification.out('Error')
 			return
 		
 		def get_app():
@@ -224,12 +230,16 @@ init -100 python:
 				notification.out('Execution file not found')
 				return
 		
-		path = root + name + ext
-		
-		env = dict(os.environ, RE_LANG=config.language)
-		
-		import subprocess
-		subprocess.Popen([path], cwd=root, env=env)
+		if sys.platform in ('win32', 'cygwin'):
+			path = name + ext
+			os.environ['RE_LANG'] = config.language
+			project.open(path)
+		else:
+			path = root + name + ext
+			env = dict(os.environ, RE_LANG=config.language)
+			
+			import subprocess
+			subprocess.Popen([path], cwd=root, env=env)
 	
 	def project__open_log_file():
 		project.open('var/log.txt')
