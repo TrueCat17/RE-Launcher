@@ -1,5 +1,22 @@
 translate russian strings:
 	
+	# prompts
+	old 'Refresh list of projects'
+	new 'Обновить список проектов'
+	
+	old 'Update Launcher'
+	new 'Обновить Лаунчер'
+	
+	old 'Update the project engine'
+	new 'Обновить движок проекта'
+	
+	old 'Ren-Engine console, Shift+O'
+	new 'Консоль Ren-Engine, Shift+O'
+	
+	old 'Copy link'
+	new 'Скопировать ссылку'
+	
+	
 	# projects
 	old 'Prev projects directory is not exists, set default value'
 	new 'Прошлой директории проектов не существует, установлено стандартное значение'
@@ -108,8 +125,8 @@ translate russian strings:
 	old 'Name'
 	new 'Название'
 	
-	old 'Genre'
-	new 'Жанр'
+	old 'Template'
+	new 'Шаблон'
 	
 	old 'Visual Novell'
 	new 'Визуальная Новелла'
@@ -120,8 +137,20 @@ translate russian strings:
 	old 'Other'
 	new 'Другое'
 	
-	old 'Ready'
-	new 'Готово'
+	old 'Options and resources best suited for <%s> games'
+	new 'Параметры и ресурсы, наиболее подходящие для игр в жанре <%s>'
+	
+	old 'Mod <Move Sprites> for interactive scene creation'
+	new 'Мод <Перемещение Спрайтов> для интерактивного создания сцен'
+	
+	old 'Mod <RPG Editor> for more convenient work with locations'
+	new 'Мод <Редактор РПГ> для более удобной работы с локациями'
+	
+	old 'No specialized setup'
+	new 'Без специализированной настройки'
+	
+	old 'Create'
+	new 'Создать'
 	
 	
 	# settings
@@ -137,6 +166,9 @@ translate russian strings:
 	old 'Themes'
 	new 'Темы'
 	
+	old 'Editor'
+	new 'Редактор'
+	
 	old 'Return'
 	new 'Вернуться'
 	
@@ -148,8 +180,28 @@ translate russian strings:
 	old 'Night'
 	new 'Ночь'
 	
-	old 'Green'
-	new 'Зелень'
+	old 'Light'
+	new 'Свет'
+	
+	old 'Summer'
+	new 'Лето'
 	
 	old 'Contrast'
 	new 'Контраст'
+	
+	
+	# theme_editor
+	old 'Rename'
+	new 'Переименовать'
+	
+	old 'Input theme name'
+	new 'Введите название темы'
+	
+	old 'A theme named <%s> already exists'
+	new 'Тема с именем <%s> уже существует'
+	
+	old 'Too many themes'
+	new 'Слишком много тем'
+	
+	old 'Font not found in <%s>'
+	new 'Шрифт не найден в <%s>'

@@ -72,8 +72,8 @@ init -100 python:
 		pl_page_index = pdl_page_index = 0
 		
 		global pl_page_size, pdl_page_size
-		pl_page_size = int(get_stage_height() * 0.45 / (btn_ysize + 10))
-		pdl_page_size = int((get_stage_height() * 0.9 - 200) / (btn_ysize + 10))
+		pl_page_size = int((get_stage_height() * 0.65 - btn_ysize * 3) / (btn_ysize + 8))
+		pdl_page_size = int((get_stage_height() * 0.95 - btn_ysize * 2 - text_size * 3 - text_size // 2 * 3 - 10) / (btn_ysize + 8))
 		
 		global pl_page_count
 		pl_page_count = int(math.ceil(len(projects_list) / pl_page_size))
