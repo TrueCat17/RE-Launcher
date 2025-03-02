@@ -4,6 +4,3 @@ init -1000:
 	$ config.width, config.height = 1200, 675
 	
 	
-	$ default_decl_at = []
-
-	
