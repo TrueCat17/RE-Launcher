@@ -300,6 +300,7 @@ init -100 python:
 		dont_save.zf.write(path_from, path_to, compresslevel = 9 if need_compress else 0)
 		
 		if dont_save.zip_paths_added == len(dont_save.zip_paths):
+			project.zip_mark_exec()
 			dont_save.zf.close()
 			del dont_save.zf
 			del dont_save.zip_paths
@@ -308,6 +309,21 @@ init -100 python:
 			return True
 		
 		return False
+	
+	def project__zip_mark_exec():
+		name = project.get_param('window_title')
+		
+		for f in reus.exec_files:
+			if '%s' in f:
+				f = f % name
+			
+			try:
+				info = dont_save.zf.getinfo(project.dir + '/' + f)
+			except KeyError:
+				print('File %s not found' % f)
+				continue
+			
+			info.external_attr |= 0o755 << 16
 	
 	
 	def project__delete_var_directory():
