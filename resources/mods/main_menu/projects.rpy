@@ -17,7 +17,7 @@ init -100 python:
 		
 		if persistent.projects_dir is None or not os.path.exists(persistent.projects_dir):
 			if persistent.projects_dir is not None:
-				notification.out('Prev projects directory is not exists, set default value')
+				notification.out('Prev directory of projects is not exists, set default value')
 				persistent.active_project = None
 			persistent.projects_dir = os.path.dirname(launcher_dir[:-1]) + '/'
 		
@@ -42,13 +42,7 @@ init -100 python:
 		if new_dir.endswith('/../'):
 			i = new_dir.rfind('/', 0, -4)
 			if i != -1:
-				new_dir = new_dir[:i]
-			min_path_len = 1 # /
-			if sys.platform in ('win32', 'cygwin'):
-				min_path_len = 3 # C:/
-			if len(new_dir) < min_path_len:
-				new_dir += '/'
-			new_dir = make_sure_dir(new_dir)
+				new_dir = new_dir[:i+1]
 		
 		if projects_dir != new_dir:
 			projects_dir = persistent.projects_dir = new_dir
@@ -71,15 +65,19 @@ init -100 python:
 		global pl_page_index, pdl_page_index
 		pl_page_index = pdl_page_index = 0
 		
-		global pl_page_size, pdl_page_size
-		pl_page_size = int((get_stage_height() * 0.65 - btn_ysize * 3) / (btn_ysize + 8))
-		pdl_page_size = int((get_stage_height() * 0.95 - btn_ysize * 2 - text_size * 3 - text_size // 2 * 3 - 10) / (btn_ysize + 8))
+		global pl_page_size
+		top_space    = 8 + max(icon_size, text_size, btn_ysize) + 4 + 2 + 8
+		bottom_space = 8 + btn_ysize + 8
+		pl_page_size = int((get_stage_height() * 0.65 - top_space - bottom_space + 8) / (btn_ysize + 8))
 		
-		global pl_page_count
-		pl_page_count = int(math.ceil(len(projects_list) / pl_page_size))
+		global pdl_page_size
+		top_space    = (text_size + 4) + text_size * 3 + btn_ysize + text_size // 2 * 4
+		bottom_space = text_size // 2
+		pdl_page_size = int((get_stage_height() * 0.95 - top_space - bottom_space + 8) / (btn_ysize + 8))
 		
-		global pdl_page_count
-		pdl_page_count = int(math.ceil(len(projects_dir_list) / pdl_page_size))
+		global pl_page_count, pdl_page_count
+		pl_page_count  = math.ceil(len(projects_list) / pl_page_size)
+		pdl_page_count = math.ceil(len(projects_dir_list) / pdl_page_size)
 	
 	signals.add('resized_stage', update_project_list)
 	
@@ -97,8 +95,8 @@ init -100 python:
 	
 	def project__open(path = ''):
 		path = projects_dir + project.dir + '/' + path
-		if not os.path.exists:
-			notification.out(_('Path <%s> not found') % path)
+		if not os.path.exists(path):
+			notification.out(_('Path <%s> not found'), path)
 			return
 		
 		if sys.platform in ('win32', 'cygwin'):
@@ -118,16 +116,16 @@ init -100 python:
 					break
 			
 			try:
-				if os.system('xdg-mime query filetype "' + path + '" > ' + tmp): return ''
+				if os.system('xdg-mime query filetype %r > %r' % (path, tmp)): return ''
 				
 				file_type = open(tmp, 'rb').read().decode('utf-8').strip()
-				if os.system('xdg-mime query default "' + file_type + '" > ' + tmp): return ''
+				if os.system('xdg-mime query default %r > %r' % (file_type, tmp)): return ''
 				
 				desktop_file = open(tmp, 'rb').read().decode('utf-8').strip()
 				if not desktop_file.endswith('.desktop'): return ''
 				
 				res = desktop_file[:-len('.desktop')]
-				if os.system('command -v ' + res + ' > /dev/null'): return ''
+				if os.system('command -v %r > /dev/null' % res): return ''
 				
 				return res
 			finally:
@@ -145,7 +143,7 @@ init -100 python:
 		
 		params = open(project_root + '/resources/params.conf', 'rb')
 		for line in params:
-			line = str(line, 'utf8')
+			line = str(line, 'utf-8')
 			if line.startswith(name):
 				s = line.find('=') + 1
 				e = line.find('#')
@@ -164,7 +162,7 @@ init -100 python:
 			name = 'Ren-Engine'
 			notification.out('window_title not found in resources/params.conf')
 		start_exe = name + '.exe'
-		start_sh = name + '.sh'
+		start_sh  = name + '.sh'
 		
 		# delete old files
 		for fn in ('start.exe', 'start.sh', start_exe, start_sh):
@@ -174,7 +172,7 @@ init -100 python:
 		launcher_name = get_from_hard_config('window_title', str)
 		
 		launcher_start_exe = launcher_name + '.exe'
-		launcher_start_sh = launcher_name + '.sh'
+		launcher_start_sh  = launcher_name + '.sh'
 		to_copy = ['Ren-Engine', launcher_start_exe, launcher_start_sh]
 		for path in to_copy:
 			old_path = launcher_dir + path
@@ -189,7 +187,7 @@ init -100 python:
 					shutil.copyfile(old_path, new_path)
 					shutil.copystat(old_path, new_path)
 			except:
-				notification.out(_('Error on copy <%s> to <%s>') % (old_path, new_path))
+				notification.out(_('Error on copy <%s> to <%s>'), old_path, new_path)
 		
 		project.update_language()
 		
@@ -206,7 +204,7 @@ init -100 python:
 				try:
 					ico.set(root + start_exe, icon_path)
 				except Exception as e:
-					notification.out(_('Error on update icon for <%s>: %s') % (start_exe, e))
+					notification.out(_('Error on update icon for <%s>: %s'), start_exe, e)
 		
 		if out_msg_ok:
 			notification.out('Ren-Engine updated')
@@ -236,10 +234,10 @@ init -100 python:
 			project.open(path)
 		else:
 			path = root + name + ext
-			env = dict(os.environ, RE_LANG=config.language)
+			env = dict(os.environ, RE_LANG = config.language)
 			
 			import subprocess
-			subprocess.Popen([path], cwd=root, env=env)
+			subprocess.Popen([path], cwd = root, env = env)
 	
 	def project__open_log_file():
 		project.open('var/log.txt')

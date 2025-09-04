@@ -9,36 +9,23 @@ init -100 python:
 		
 		new_dir = projects_dir + new_project.name + '/'
 		if os.path.exists(new_dir):
-			notification.out(_('Directory already exists:\n%s') % new_dir)
+			notification.out(_('Directory already exists') + ':\n' + new_dir)
 			return
 		os.mkdir(new_dir)
 		
-		copy_directory(launcher_dir + 'templates/common/resources', new_dir + 'resources')
-		copy_directory(launcher_dir + 'templates/' + new_project.template + '/resources', new_dir + 'resources')
+		common_dir = launcher_dir + 'templates/common/resources'
+		spec_dir   = launcher_dir + 'templates/' + new_project.template + '/resources'
+		new_resources = new_dir + 'resources'
+		shutil.copytree(common_dir, new_resources)
+		shutil.copytree(spec_dir,   new_resources, dirs_exist_ok = True)
+		
 		project.select(new_project.name)
 		project.update_engine(False)
 		update_project_list(projects_dir)
 		project.set_language(config.language, out_msg_ok = False)
 		
-		hide_screen('new')
+		new_project.close()
 		notification.out(_('Project created') + ':\n' + new_dir)
-	
-	def copy_directory(src, dst):
-		src = make_sure_dir(src)
-		dst = make_sure_dir(dst)
-		
-		for path, ds, fs in os.walk(src):
-			path = make_sure_dir(path)
-			dst_path = dst + path[len(src):]
-			
-			for d in ds:
-				d = dst_path + d
-				os.makedirs(d, exist_ok = True)
-			
-			for f in fs:
-				f_from = path + f
-				f_to   = dst_path + f
-				shutil.copyfile(f_from, f_to)
 	
 	
 	def new_project__show_prompt(template):
@@ -61,20 +48,18 @@ init -100 python:
 			res.append('')
 		return res
 	
-	def new_project__hide_screen(screen_name):
-		if screen_name == 'new':
-			new_project.hovered_template = ''
-	signals.add('hide_screen', new_project__hide_screen)
+	def new_project__close():
+		new_project.hovered_template = ''
+		hide_screen('new')
 	
 	build_object('new_project')
 	
 	new_project.name = ''
 	new_project.template = 'vn'
 	
-	new_project.templates = ('vn', 'rpg', 'other')
 	new_project.template_names = {
-		'vn': 'Visual Novell',
-		'rpg': 'RPG',
+		'vn':    'Visual Novell',
+		'rpg':   'RPG',
 		'other': 'Other',
 	}
 	
@@ -94,13 +79,12 @@ init -100 python:
 
 
 screen new:
-	image im.rect(theme.back_bg_color):
+	image back_bg:
 		size 1.0
 	
 	vbox:
 		align (0.5, 0.3)
 		spacing text_size
-		xsize 1.0
 		
 		text _('New Project'):
 			xalign 0.5
@@ -110,25 +94,23 @@ screen new:
 		
 		null ysize 1
 		
-		image get_panel():
+		image panel_image:
 			corner_sizes 15
-			xalign 0.5
-			size (0.5, btn_ysize + 20)
+			xsize 0.5
+			ysize btn_ysize + 20
 			
-			$ xsize = get_stage_width() * 2 // 7
-			$ color = get_middle_color(theme.new_btn_colors[0], theme.new_btn_colors[1])
-			textbutton (_('Name') + ': ' + (new_project.name)):
+			textbutton (_('Name') + ': ' + new_project.name):
 				align 0.5
-				xsize xsize
-				ground im.round_rect(color, xsize, btn_ysize, 6)
+				xsize 0.3
+				ground like_new_btn_ground
 				font  theme.panel_btn_text_font
 				color theme.panel_btn_text_color_hover
 				action input.ask_str(new_project.set_name, 'Input project name', new_project.name, allow = alphabet + numbers + '-_.')
 		
-		image get_panel():
+		image panel_image:
 			corner_sizes -1
-			xalign 0.5
-			size (0.5, len(new_project.templates) * (btn_ysize + 8) + text_size * 6 + 60)
+			xsize 0.5
+			ysize len(new_project.template_names) * (btn_ysize + 8) + text_size * 6 + 60
 			
 			vbox:
 				align 0.5
@@ -146,11 +128,11 @@ screen new:
 					xalign 0.5
 					spacing 8
 					
-					for template in new_project.templates:
-						textbutton _(new_project.template_names[template]):
-							xsize xsize
-							ground im.round_rect(theme.panel_btn_ground_color, xsize, btn_ysize, 6)
-							hover  im.round_rect(theme.panel_btn_hover_color,  xsize, btn_ysize, 6)
+					for template, name in new_project.template_names.items():
+						textbutton _(name):
+							xsize 0.3
+							ground panel_btn_ground
+							hover  panel_btn_hover
 							font        theme.panel_btn_text_font
 							color       theme.panel_btn_text_color
 							hover_color theme.panel_btn_text_color_hover
@@ -162,7 +144,7 @@ screen new:
 				
 				null ysize 10
 				
-				image im.rect(theme.panel_border_color):
+				image panel_border:
 					size (0.5, 2)
 				
 				vbox:
@@ -187,6 +169,6 @@ screen new:
 								color theme.open_text_color
 	
 	use icon_btn('create', 0.97, 0.97, get_stage_width() // 8)
-	use icon_btn('return', 0.03, 0.97, get_stage_width() // 8, HideScreen('new'))
+	use icon_btn('return', 0.03, 0.97, get_stage_width() // 8, new_project.close)
 	
-	key 'ESCAPE' action HideScreen('new')
+	key 'ESCAPE' action new_project.close

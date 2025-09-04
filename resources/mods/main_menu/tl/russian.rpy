@@ -18,11 +18,14 @@ translate russian strings:
 	
 	
 	# projects
-	old 'Prev projects directory is not exists, set default value'
+	old 'Prev directory of projects is not exists, set default value'
 	new 'Прошлой директории проектов не существует, установлено стандартное значение'
 	
 	old 'Disallowed action'
 	new 'Запрещённое действие'
+	
+	old 'Path <%s> not found'
+	new 'Путь <%s> не найден'
 	
 	old 'Error on copy <%s> to <%s>'
 	new 'Ошибка при копировании <%s> в <%s>'
@@ -116,8 +119,8 @@ translate russian strings:
 	old 'Input project name'
 	new 'Введите имя проекта'
 	
-	old 'Directory already exists:\n%s'
-	new 'Директория уже существует:\n%s'
+	old 'Directory already exists'
+	new 'Директория уже существует'
 	
 	old 'Project created'
 	new 'Проект создан'
@@ -154,11 +157,8 @@ translate russian strings:
 	
 	
 	# settings
-	old 'Projects directory'
+	old 'Directory of projects'
 	new 'Директория проектов'
-	
-	old 'Default'
-	new 'Сброс'
 	
 	old 'Window size'
 	new 'Размер окна'
@@ -168,9 +168,6 @@ translate russian strings:
 	
 	old 'Editor'
 	new 'Редактор'
-	
-	old 'Return'
-	new 'Вернуться'
 	
 	
 	# themes

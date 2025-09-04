@@ -11,8 +11,8 @@ init 1 python:
 
 
 label start:
-	#show bg room
-	#show rn serious-2
+	#scene bg entry
+	#show rn 1 normal
 	
 	
 	

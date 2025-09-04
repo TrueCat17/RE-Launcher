@@ -4,7 +4,4 @@ init -1000:
 		size 1.0
 	
 	# Example:
-	# image cg some = 'images/cg/some.jpg'
-	
-	
-
+	# image cg some = "images/cg/some.jpg"

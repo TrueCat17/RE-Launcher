@@ -4,5 +4,3 @@ init -990 python:
 	mc.make_rpg('images/characters/', 'mc', 'winter')
 	
 	me = mc
-	
-	

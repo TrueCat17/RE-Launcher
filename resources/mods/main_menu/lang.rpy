@@ -26,7 +26,7 @@ init -1000 python:
 		config_path = project.get_config_path()
 		if os.path.exists(config_path):
 			for line in open(config_path, 'rb'):
-				tmp_lang, tmp_enable_all = get_language_from_line(str(line, 'utf8'))
+				tmp_lang, tmp_enable_all = get_language_from_line(str(line, 'utf-8'))
 				if tmp_lang:
 					lang, enable_all = tmp_lang, tmp_enable_all
 		
@@ -39,8 +39,8 @@ init -1000 python:
 		
 		config_path = project.get_config_path()
 		if not os.path.exists(config_path):
-			f = open(config_path, 'wb')
-			f.write(bytes(get_code_for_set_lang(project.language), 'utf8'))
+			with open(config_path, 'wb') as f:
+				f.write(bytes(get_code_for_set_lang(project.language), 'utf-8'))
 		
 		lang, enable_all = project.get_language()
 		if not enable_all:
@@ -49,7 +49,7 @@ init -1000 python:
 			os.mkdir(tl_path_project)
 			
 			for f in os.listdir(tl_path_launcher):
-				if f.endswith(lang + '.rpy'):
+				if f == lang + '.rpy':
 					shutil.copyfile(tl_path_launcher + f, tl_path_project + f)
 					break
 	
@@ -58,24 +58,24 @@ init -1000 python:
 		config_path = project.get_config_path()
 		
 		if os.path.exists(config_path):
-			lines = [str(i, 'utf8') for i in open(config_path, 'rb')]
+			lines = [str(i, 'utf-8') for i in open(config_path, 'rb')]
 		else:
 			lines = []
 		
-		f = open(config_path, 'wb')
-		was_lang = False
-		for line in lines:
-			lang, enable_all = get_language_from_line(line)
-			if lang:
-				was_lang = True
-				i = line.rfind('=')
-				line = line[:i].rstrip() + ' = "' + project.language + '"' + (' # enable all' if enable_all else '') + '\n'
-			f.write(bytes(line, 'utf8'))
-		
-		if not was_lang:
-			if lines and lines[-1].strip():
-				f.write(b'\n')
-			f.write(bytes(get_code_for_set_lang(project.language), 'utf8'))
+		with open(config_path, 'wb') as f:
+			was_lang = False
+			for line in lines:
+				lang, enable_all = get_language_from_line(line)
+				if lang:
+					was_lang = True
+					i = line.rfind('=')
+					line = line[:i].rstrip() + ' = "' + project.language + '"' + (' # enable all' if enable_all else '') + '\n'
+				f.write(bytes(line, 'utf-8'))
+			
+			if not was_lang:
+				if lines and lines[-1].strip():
+					f.write(b'\n')
+				f.write(bytes(get_code_for_set_lang(project.language), 'utf-8'))
 		
 		project.update_language()
 		if out_msg_ok:

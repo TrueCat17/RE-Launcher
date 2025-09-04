@@ -1,43 +1,40 @@
 init python:
-	def ico__make(png_path):
+	def ico__make(image_path):
 		import struct
 		
 		if not os.path.exists(ico.tmp_path):
 			os.makedirs(ico.tmp_path)
 		
-		count = 0
 		paths = []
 		sizes = {}
-		sizes[png_path] = get_image_size(png_path)
-		w, h = sizes[png_path]
+		w, h = sizes[image_path] = get_image_size(image_path)
 		while min(w, h) >= 16:
 			if max(w, h) <= 256:
 				path = ico.tmp_path + 'icon-%sx%s' % (w, h) + '.png'
-				im.save(png_path, path, w, h)
+				im.save(image_path, path, w, h)
 				
 				paths.append(path)
 				sizes[path] = (w, h)
-			
-				count += 1
 			w //= 2
 			h //= 2
 		
-		if count == 0:
+		if not paths:
 			raise Exception('Incorrect icon image')
 		
 		data_sizes = {}
-		for path in paths + [png_path]:
+		for path in paths + [image_path]:
 			data_sizes[path] = os.path.getsize(path)
 		
-		if sizes[png_path] == sizes[paths[0]] and data_sizes[png_path] < data_sizes[paths[0]]:
-			paths[0] = png_path
+		if sizes[image_path] == sizes[paths[0]] and data_sizes[image_path] < data_sizes[paths[0]]:
+			if image_path.lower().endswith('.png'):
+				paths[0] = image_path
 		
 		header_size = 6
 		record_size = 16
 		data_offset = header_size + record_size * len(paths)
 		
 		# ico header
-		res = struct.pack('HHH', 0, 1, count)
+		res = struct.pack('HHH', 0, 1, len(paths))
 		
 		# records
 		for path in paths:
@@ -48,15 +45,12 @@ init python:
 		
 		# datas (pngs)
 		for path in paths:
-			f = open(path, 'rb')
-			png_content = f.read()
-			f.close()
-			res += png_content
+			with open(path, 'rb') as f:
+				res += f.read()
 		
 		res_path = ico.tmp_path + 'icon.ico'
-		f = open(res_path, 'wb')
-		f.write(res)
-		f.close()
+		with open(res_path, 'wb') as f:
+			f.write(res)
 		return res_path
 	
 	def ico__set(exe_path, icon_path):
@@ -82,11 +76,9 @@ init python:
 		# set icon
 		content = change_icons(exe_path, new_icon_path)
 		
-		f = open(exe_path, 'wb')
-		f.write(content)
-		f.close()
+		with open(exe_path, 'wb') as f:
+			f.write(content)
 	
 	
 	build_object('ico')
 	ico.tmp_path = '../var/ico/'
-

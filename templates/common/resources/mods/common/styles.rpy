@@ -5,4 +5,3 @@
 init -998:
 	style choice_button:
 		font 'Calibri'
-

@@ -5,4 +5,3 @@ label start:
 	rn "Visual Novell starts here."
 	
 	scene bg black with dissolve
-

@@ -4,4 +4,3 @@ init -1000:
 		size 1.0
 	
 	image bg black = "images/bg/black.jpg"
-

@@ -1,14 +1,29 @@
 init -100 python:
 	user_themes = {}
 	
+	def theme_editor__load():
+		if not os.path.exists(theme_editor.path):
+			return
+		
+		with open(theme_editor.path, 'rb') as f:
+			code = f.read().decode('utf-8')
+			try:
+				cmpl = compile(code, theme_editor.path, 'exec')
+				eval(cmpl)
+			except BaseException as e:
+				print(e)
+				notification.out('Error on loading of user themes, see var/log.txt')
+	
+	
 	def theme_editor__create():
 		if len(user_themes) >= 5:
 			notification.out('Too many themes')
 			return
 		
 		orig_name = persistent.theme_name
-		if '-' in orig_name:
-			orig_name = orig_name[:orig_name.index('-')]
+		i = orig_name.find('-')
+		if i != -1:
+			orig_name = orig_name[:i]
 		
 		i = 1
 		while True:
@@ -22,13 +37,14 @@ init -100 python:
 		theme_editor.save()
 	
 	def theme_editor__remove(name):
+		names = list(user_themes.keys())
+		index = names.index(name)
+		theme_editor.bin_hovered_name = '' if index == len(names) - 1 else names[index + 1]
+		
 		del user_themes[name]
 		if persistent.theme_name == name:
 			set_theme('Day')
 		theme_editor.save()
-		
-		index = user_themes_names.index(name)
-		theme_editor.bin_hovered_name = '' if index == len(user_themes_names) - 1 else user_themes_names[index + 1]
 	
 	
 	def theme_editor__rename():
@@ -41,7 +57,7 @@ init -100 python:
 			return
 		
 		if name in themes or name in user_themes:
-			notification.out('A theme named <%s> already exists')
+			notification.out(_('A theme named <%s> already exists'), name)
 			return
 		
 		del user_themes[persistent.theme_name]
@@ -115,7 +131,7 @@ init -100 python:
 				if f.startswith(value + '.'):
 					break
 			else:
-				notification.out(_('Font not found in <%s>') % 'resources/fonts/')
+				notification.out(_('Font not found in <%s>'), 'resources/fonts/')
 				return
 		else:
 			value = value.replace(' ', '')
@@ -156,31 +172,30 @@ init -100 python:
 	
 	
 	def theme_editor__save():
-		path = 'mods/main_menu/user_themes.rpy'
 		if not user_themes:
-			if os.path.exists(path):
-				os.remove(path)
+			if os.path.exists(theme_editor.path):
+				os.remove(theme_editor.path)
 			return
 		
-		content = 'init -50 python:\n'
-		content += '\t\n'
-		
+		content = ''
 		for name, theme in user_themes.items():
-			content += '\t' + 'user_themes[' + repr(name) + '] = Object(' + '\n'
+			content += 'user_themes[%r] = Object(\n' % name
 			
 			for prop, value in theme.items():
-				content += '\t\t' + prop + ' = ' + repr(value) + ',\n'
+				content += '\t%s = %r,\n' % (prop, value)
 			
-			content += '\t' + ')' + '\n'
-			content += '\t\n'
+			content += ')\n\n'
 		
-		f = open(path, 'wb')
-		f.write(bytes(content, 'utf-8'))
-		f.close()
+		with open(theme_editor.path, 'wb') as f:
+			f.write(content.encode('utf-8'))
 	
 	
 	
 	build_object('theme_editor')
+	
+	theme_editor.path = '../var/user_themes.py'
+	theme_editor.load()
+	
 	theme_editor.category = 'back'
 	
 	theme_editor.props = {
@@ -246,20 +261,16 @@ screen theme_editor:
 	zorder 10000
 	modal True
 	
-	image im.rect(theme.back_bg_color):
+	image back_bg:
 		size 1.0
 	
 	python:
 		indent = get_stage_width() // 70
 		
-		panel_image = get_panel()
 		panel_ysize = (get_stage_height() - indent * 3) // 2
 		panel_xsize3 = panel_ysize * 3               # props
 		panel_xsize1 = (panel_xsize3 - indent) // 2  # theme names
 		panel_xsize2 = panel_xsize1                  # categories
-		
-		btn_ground = im.round_rect(theme.panel_btn_ground_color, 100, btn_ysize, 6)
-		btn_hover  = im.round_rect(theme.panel_btn_hover_color,  100, btn_ysize, 6)
 		
 		btn_font        = theme.panel_btn_text_font
 		btn_color       = theme.panel_btn_text_color
@@ -269,8 +280,7 @@ screen theme_editor:
 	
 	text _('Editor'):
 		align 0.03
-		xsize get_stage_width() // 8
-		ysize btn_ysize
+		xsize 0.125
 		text_align  'center'
 		text_valign 'center'
 		font  theme.text_font
@@ -297,16 +307,15 @@ screen theme_editor:
 					ypos indent
 					spacing 8
 					
-					$ user_themes_names = list(user_themes.keys()) # copy, because can remove
-					for name in user_themes_names:
+					for name in list(user_themes.keys()): # copy, because can remove
 						hbox:
 							spacing 8
 							
 							textbutton name:
 								yalign 0.5
-								xsize panel_xsize1 - btn_ysize - indent * 3
-								ground btn_ground
-								hover  btn_hover
+								xsize panel_xsize1 - btn_ysize - indent * 2 - 8
+								ground panel_btn_ground
+								hover  panel_btn_hover
 								font        btn_font
 								color       btn_color
 								hover_color btn_hover_color
@@ -315,18 +324,18 @@ screen theme_editor:
 							
 							button:
 								yalign 0.5
-								size icon_size + 10
-								ground im.round_rect(theme.btn_ground_color, btn_ysize, btn_ysize, 6)
-								hover  im.round_rect(theme.btn_hover_color,  btn_ysize, btn_ysize, 6)
+								size btn_ysize
+								ground panel_btn_ground
+								hover  panel_btn_hover
 								action theme_editor.remove(name)
 								
 								hovered   theme_editor.bin_hovered(name)
 								unhovered theme_editor.bin_unhovered(name)
 								
-								$ bin_image, bin_icon_size = theme_editor.get_bin(name)
-								image bin_image:
+								$ image, size = theme_editor.get_bin(name)
+								image image:
 									align 0.5
-									size bin_icon_size
+									size size
 				
 				textbutton _('Create'):
 					xalign 0.5
@@ -335,8 +344,8 @@ screen theme_editor:
 					action theme_editor.create
 					
 					xsize panel_xsize1 // 2
-					ground btn_ground
-					hover  btn_hover
+					ground panel_btn_ground
+					hover  panel_btn_hover
 					font        btn_font
 					color       btn_color
 					hover_color btn_hover_color
@@ -360,8 +369,8 @@ screen theme_editor:
 							for category in list(theme_editor.props.keys())[i * 4 : (i + 1) * 4]:
 								textbutton category:
 									xsize (panel_xsize2 - indent * 2 - 8) // 2
-									ground btn_ground
-									hover  btn_hover
+									ground panel_btn_ground
+									hover  panel_btn_hover
 									font        btn_font
 									color       btn_color
 									hover_color btn_hover_color
@@ -376,8 +385,8 @@ screen theme_editor:
 					action theme_editor.rename
 					
 					xsize panel_xsize2 // 2
-					ground btn_ground
-					hover  btn_hover
+					ground panel_btn_ground
+					hover  panel_btn_hover
 					font        btn_font
 					color       btn_color
 					hover_color btn_hover_color
@@ -398,8 +407,8 @@ screen theme_editor:
 					button:
 						xsize panel_xsize3 - indent * 2
 						ysize btn_ysize
-						ground btn_ground
-						hover  btn_hover
+						ground panel_btn_ground
+						hover  panel_btn_hover
 						
 						hovered   theme_editor.hovered(prop)
 						unhovered theme_editor.unhovered(prop)
@@ -453,5 +462,5 @@ screen theme_editor:
 	
 	use icon_btn('return', 0.03, 0.97, get_stage_width() // 8, HideScreen('theme_editor'))
 	
-	if not renpy.has_screen('input'):
+	if not has_screen('input'):
 		key 'ESCAPE' action Function(set_timeout, HideScreen('theme_editor'), 0.1)

@@ -11,4 +11,3 @@ init python:
 	
 	
 	rpg_locations["enter"].x, rpg_locations["enter"].y = 420, 350
-

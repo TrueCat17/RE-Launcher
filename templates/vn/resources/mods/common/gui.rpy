@@ -22,4 +22,3 @@ init -1000 python:
 	
 	gui.slot_hover    = 'images/gui/save_load/hover.png'
 	gui.slot_selected = 'images/gui/save_load/selected.png'
-
