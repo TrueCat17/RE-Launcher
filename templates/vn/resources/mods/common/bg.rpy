@@ -5,4 +5,4 @@ init -1000:
 	
 	image bg black = "images/bg/black.jpg"
 	
-	image bg room = "images/bg/room.jpg"
+	image bg entry = "images/bg/entry.webp"

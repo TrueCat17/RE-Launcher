@@ -1,7 +1,7 @@
 label start:
-	scene bg room
+	scene bg entry
 	
-	show rn happy with dspr
+	show rn smile with dspr
 	rn "Visual Novell starts here."
 	
 	scene bg black with dissolve
