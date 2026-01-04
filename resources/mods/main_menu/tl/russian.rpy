@@ -131,7 +131,7 @@ translate russian strings:
 	old 'Template'
 	new 'Шаблон'
 	
-	old 'Visual Novell'
+	old 'Visual Novel'
 	new 'Визуальная Новелла'
 	
 	old 'RPG'

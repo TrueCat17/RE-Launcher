@@ -58,7 +58,7 @@ init -100 python:
 	new_project.template = 'vn'
 	
 	new_project.template_names = {
-		'vn':    'Visual Novell',
+		'vn':    'Visual Novel',
 		'rpg':   'RPG',
 		'other': 'Other',
 	}
