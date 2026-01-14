@@ -12,7 +12,7 @@ init 1 python:
 
 label start:
 	#scene bg entry
-	#show rn 1 normal
+	#show rn 2 smile
 	
 	
 	
